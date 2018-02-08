@@ -1,9 +1,9 @@
-/*----------------------------------------------------------------------------*/
+/*vamos-----------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*Vamos-----------------------------------------------------------------------*/
 
 package org.usfirst.frc.team4662.robot;
 
@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
 	
 	public static RobotMap m_robotMap;
 	public static DriveSubsystem m_driveSubsystem;
+	public static LiftSubsystem m_liftSubsystem; 
+	public static DriverCam m_driverCam; 
 	public static Autonomous m_autonomousCommand; 
 	public static OI m_oi;
 
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
 		String strFileName = "/home/lvuser/robot.xml";
 		m_robotMap = new RobotMap(strFileName);
 		m_driveSubsystem = new DriveSubsystem();
+		m_liftSubsystem = new LiftSubsystem();
+		m_driverCam = new DriverCam();
 		m_oi = new OI();
 		
 		// chooser.addObject("My Auto", new MyAutoCommand());
