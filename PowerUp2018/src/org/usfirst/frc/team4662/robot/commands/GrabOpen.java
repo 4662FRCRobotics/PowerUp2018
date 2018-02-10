@@ -8,15 +8,17 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class GrabOpen extends Command {
-
+	
     public GrabOpen() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_grabSubsystem);
+    	setInterruptible(true);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	setTimeout(0.8);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -26,11 +28,12 @@ public class GrabOpen extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+    	return isTimedOut() || Robot.m_grabSubsystem.isGrabOpen();
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.m_grabSubsystem.setGrabOpenTrue();
     	Robot.m_grabSubsystem.grabStop();
     }
 

@@ -51,9 +51,9 @@ public class OI {
 		m_tiltDown = new JoystickButton(m_operatorPad, 8);
 		m_tiltDown.whileHeld(new TiltDown());
 		m_grabClose = new JoystickButton(m_operatorPad, 3);
-		m_grabClose.whileHeld(new GrabClose());
+		m_grabClose.whenPressed(new GrabClose());
 		m_grabOpen = new JoystickButton(m_operatorPad, 4);
-		m_grabOpen.whileHeld(new GrabOpen());
+		m_grabOpen.whenPressed(new GrabOpen());
 		
 		if( Robot.m_robotMap.isDashboardTest()) {
 			SmartDashboard.putData("PIDTest", new TurnAnglePID());

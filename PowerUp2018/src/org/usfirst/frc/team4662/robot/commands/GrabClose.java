@@ -13,6 +13,7 @@ public class GrabClose extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_grabSubsystem);
+    	setInterruptible(true);
     }
 
     // Called just before this Command runs the first time
@@ -26,11 +27,12 @@ public class GrabClose extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return Robot.m_grabSubsystem.isGrabClosed();
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.m_grabSubsystem.setGrabOpenFalse();
     	Robot.m_grabSubsystem.grabStop();
     }
 
