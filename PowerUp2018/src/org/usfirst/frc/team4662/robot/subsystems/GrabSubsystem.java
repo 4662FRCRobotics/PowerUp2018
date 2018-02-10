@@ -2,6 +2,8 @@ package org.usfirst.frc.team4662.robot.subsystems;
 
 import org.usfirst.frc.team4662.robot.Robot;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -24,6 +26,8 @@ public class GrabSubsystem extends Subsystem {
 	public GrabSubsystem() {
 		m_grabController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabController"));
 		m_tiltController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("TiltController"));
+		m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_dGrabSpeed = 0.3; 
 		m_dReleaseSpeed = 0.5;
 		m_dTiltSpeed = 0.3; 
