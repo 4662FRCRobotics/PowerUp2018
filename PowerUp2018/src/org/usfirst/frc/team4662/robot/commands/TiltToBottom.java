@@ -3,16 +3,25 @@ package org.usfirst.frc.team4662.robot.commands;
 import org.usfirst.frc.team4662.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class MoveLift extends Command {
+public class TiltToBottom extends Command {
 
-    public MoveLift() {
+	private boolean m_bIsTimeOut;
+	
+    public TiltToBottom() {
+      
+    	requires(Robot.m_grabSubsystem);
+    	m_bIsTimeOut = false;
+    }
+    
+    public TiltToBottom(double timeOut) {
         
-    	requires(Robot.m_liftSubsystem);
+    	requires(Robot.m_grabSubsystem);
+    	m_bIsTimeOut = true;
+    	setTimeout(timeOut);
     }
 
     // Called just before this Command runs the first time
@@ -21,21 +30,28 @@ public class MoveLift extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_liftSubsystem.moveLift(Robot.m_oi.m_operatorPad.getY());
-    	//SmartDashboard.putNumber("POVOperatorPad", Robot.m_oi.m_operatorPad.getPOV());
+    	Robot.m_grabSubsystem.tiltDown();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+    	boolean bReturnValue = false;
+    	if ( m_bIsTimeOut) {
+    		bReturnValue = isTimedOut();
+    	} else {
+    		bReturnValue = Robot.m_grabSubsystem.isTiltAtBottom();
+    	}
+        return bReturnValue;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.m_grabSubsystem.tiltStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }
