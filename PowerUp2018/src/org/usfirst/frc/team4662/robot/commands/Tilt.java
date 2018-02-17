@@ -7,38 +7,34 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class GrabOpen extends Command {
-	
-    public GrabOpen() {
+public class Tilt extends Command {
+
+    public Tilt() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_grabSubsystem);
-    	setInterruptible(true);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_grabSubsystem.grabOpen();
+    	Robot.m_grabSubsystem.setTiltSpeed(Robot.m_oi.m_operatorPad.getThrottle()/3);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return false;
+        return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.m_grabSubsystem.grabStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }

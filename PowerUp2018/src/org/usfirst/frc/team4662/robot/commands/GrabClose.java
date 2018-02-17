@@ -27,12 +27,11 @@ public class GrabClose extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.m_grabSubsystem.isGrabClosed();
+        return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.m_grabSubsystem.setGrabOpenFalse();
     	Robot.m_grabSubsystem.grabStop();
     }
 

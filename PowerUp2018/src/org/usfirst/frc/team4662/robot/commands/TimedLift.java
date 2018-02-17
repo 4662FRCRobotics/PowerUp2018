@@ -7,11 +7,12 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ClimbDown extends Command {
+public class TimedLift extends Command {
 
-    public ClimbDown() {
-       
-    	requires(Robot.m_climbSubsystem);
+    public TimedLift(double timeout) {
+    
+    	requires(Robot.m_liftSubsystem);
+    	setTimeout(timeout);
     }
 
     // Called just before this Command runs the first time
@@ -20,17 +21,17 @@ public class ClimbDown extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_climbSubsystem.climbDown();
+    	Robot.m_liftSubsystem.moveLiftUp();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return isTimedOut();
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.m_climbSubsystem.moveClimb(0);
+    	Robot.m_liftSubsystem.moveLift(0);
     }
 
     // Called when another command which requires one or more of the same

@@ -12,6 +12,6 @@ public class PutPCubeDown extends CommandGroup {
     public PutPCubeDown() {
     	requires(Robot.m_grabSubsystem);
     	addSequential(new TiltToBottom(1));
-    	addSequential(new GrabOpen());
+    	addSequential(new GrabOpenTimed(0.5));
     }
 }

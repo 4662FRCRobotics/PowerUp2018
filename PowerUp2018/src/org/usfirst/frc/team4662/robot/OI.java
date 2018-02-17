@@ -30,7 +30,8 @@ public class OI {
 	public JoystickButton m_grabOpen;
 	public JoystickButton m_climbUp;
 	public JoystickButton m_climbDown;
-
+	public JoystickButton m_putPCubeDown;
+	public JoystickButton toggleDriveCamera;
 	
 	public OI() {
 		
@@ -39,8 +40,9 @@ public class OI {
 		m_keepHeading.whileHeld(new KeepHeadingPID());
 		m_climbUp = new JoystickButton(m_driveStick, 3);
 		m_climbUp.whileHeld(new ClimbUp());
-		m_climbDown = new JoystickButton(m_driveStick, 4);
-		m_climbDown.whileHeld(new ClimbDown());
+		toggleDriveCamera = new JoystickButton(m_driveStick, 5);
+		toggleDriveCamera.whenPressed(new ToggleDriveCamera());
+		
 		m_operatorPad = new Joystick(1);
 		m_liftUp = new JoystickButton(m_operatorPad, 5);
 		m_liftUp.whileHeld(new MoveLiftUp());
@@ -50,10 +52,12 @@ public class OI {
 		m_tiltUp.whileHeld(new TiltUp());
 		m_tiltDown = new JoystickButton(m_operatorPad, 8);
 		m_tiltDown.whileHeld(new TiltDown());
-		m_grabClose = new JoystickButton(m_operatorPad, 3);
-		m_grabClose.whenPressed(new GrabClose());
-		m_grabOpen = new JoystickButton(m_operatorPad, 4);
-		m_grabOpen.whenPressed(new GrabOpen());
+		m_grabClose = new JoystickButton(m_operatorPad, 1);
+		m_grabClose.whileHeld(new GrabClose());
+		m_grabOpen = new JoystickButton(m_operatorPad, 3);
+		m_grabOpen.whileHeld(new GrabOpen());
+		m_putPCubeDown = new JoystickButton(m_operatorPad, 2);
+		m_putPCubeDown.whenPressed(new PutPCubeDown());
 		
 		if( Robot.m_robotMap.isDashboardTest()) {
 			SmartDashboard.putData("PIDTest", new TurnAnglePID());

@@ -2,6 +2,7 @@ package org.usfirst.frc.team4662.robot.subsystems;
 
 import org.usfirst.frc.team4662.robot.Robot;
 import org.usfirst.frc.team4662.robot.commands.Display;
+import org.usfirst.frc.team4662.robot.commands.Tilt;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -24,6 +25,11 @@ public class GrabSubsystem extends Subsystem {
 	private double m_dTiltSpeed;
 	private boolean m_bIsGrabOpen;
 	private double m_dReleaseSpeed;
+	private double m_dMaxOpenCount;
+	private double m_dCurrentOpenCount;
+	private double m_dOpenIncrement;
+	private double m_dCloseIncrement;
+	private final int m_iMaxOpenIterations = 40;
 	
 	public GrabSubsystem() {
 		m_grabController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabController"));
@@ -37,12 +43,15 @@ public class GrabSubsystem extends Subsystem {
 		m_dReleaseSpeed = 0.5;
 		m_dTiltSpeed = 0.3; 
 		m_bIsGrabOpen = false;
+		m_dOpenIncrement = 10.0;
+		m_dCloseIncrement = m_dOpenIncrement/2;
+		m_dMaxOpenCount = m_dOpenIncrement * m_iMaxOpenIterations;
 	}
 	
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
-    	setDefaultCommand(new Display());
+    	setDefaultCommand(new Tilt());
     }
     
     
@@ -59,7 +68,8 @@ public class GrabSubsystem extends Subsystem {
     	m_tiltController.set(m_dTiltSpeed);
     	displayLimitSwitches();
     
-   }
+    }
+    
     public void tiltDown() {
     	m_tiltController.set(-m_dTiltSpeed);
     	displayLimitSwitches();
@@ -68,18 +78,36 @@ public class GrabSubsystem extends Subsystem {
     public void tiltStop() {
     	m_tiltController.set(0.0);
     }
+    
     public boolean isTiltAtBottom() {
     	displayLimitSwitches();
     	return m_tiltController.getSensorCollection().isFwdLimitSwitchClosed();
     	
     }
+    
+    public void setTiltSpeed(double speed) {
+    	m_tiltController.set(speed);
+    }
+    
     public void grabClose() {
-    	m_grabController.set(m_dGrabSpeed);
-    	displayLimitSwitches();
+    	if (isGrabClosed()) {
+    		setGrabOpenFalse();
+        	grabStop();
+    	} else {
+    		m_grabController.set(m_dGrabSpeed);
+        	displayLimitSwitches();
+        	m_dCurrentOpenCount = m_dCurrentOpenCount - m_dCloseIncrement;
+    	}
     }
     public void grabOpen() {
-    	m_grabController.set(-m_dReleaseSpeed);
-    	displayLimitSwitches();
+    	if (isGrabMax()) {
+    		setGrabOpenTrue();
+    		grabStop();
+    	} else {
+    		m_grabController.set(-m_dReleaseSpeed);
+    		displayLimitSwitches();
+        	m_dCurrentOpenCount = m_dCurrentOpenCount + m_dOpenIncrement;
+    	}
     }
     public void grabStop() {
     	m_grabController.set(0.0);
@@ -95,6 +123,9 @@ public class GrabSubsystem extends Subsystem {
     }
     public void setGrabOpenFalse() {
     	m_bIsGrabOpen = false;
+    }
+    public boolean isGrabMax() {
+    	return (m_dCurrentOpenCount > m_dMaxOpenCount);
     }
 }
 

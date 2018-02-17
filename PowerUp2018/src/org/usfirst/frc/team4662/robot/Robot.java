@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
 		m_grabSubsystem = new GrabSubsystem(); 
 		m_climbSubsystem = new ClimbSubsystem();
 		m_driverCam = new DriverCam();
+		m_autonomousCommand = new Autonomous();
 		m_oi = new OI();
 		
 		// chooser.addObject("My Auto", new MyAutoCommand());
@@ -82,7 +83,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = new Autonomous();
 		m_autonomousCommand.initialize();
 
 		/*

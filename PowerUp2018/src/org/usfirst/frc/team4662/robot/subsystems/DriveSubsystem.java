@@ -112,7 +112,7 @@ public class DriveSubsystem extends Subsystem {
     //default command for basic arcade drive
     public void arcadeDrive(double throttle, double turn) {
     	//for an even number of gear stages put 1, for an odd number of gear stages put -1
-    	double dDriveInvert = -1;
+    	double dDriveInvert = 1;
     	m_robotDrive.arcadeDrive(throttle * dDriveInvert, turn);
     	smartDashBoardDiplay();
     }

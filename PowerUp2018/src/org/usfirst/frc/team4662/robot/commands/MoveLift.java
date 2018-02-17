@@ -21,7 +21,7 @@ public class MoveLift extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_liftSubsystem.moveLift(Robot.m_oi.m_operatorPad.getY());
+    	Robot.m_liftSubsystem.moveLift(-Robot.m_oi.m_operatorPad.getY());
     	//SmartDashboard.putNumber("POVOperatorPad", Robot.m_oi.m_operatorPad.getPOV());
     }
 

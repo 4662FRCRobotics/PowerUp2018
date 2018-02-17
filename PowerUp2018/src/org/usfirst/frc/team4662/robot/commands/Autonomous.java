@@ -135,9 +135,12 @@ public class Autonomous extends CommandGroup {
 						//strCommandValue = "CommandValue";
 						strCommandValue = eElement.getTextContent();
 						SmartDashboard.putString("Command " + i,strCommand + ":" + strCommandValue);
+						addCommand(strCommand, strCommandValue);
+						
 					} else {
 						System.out.println(nNode.getNodeType());
 					}
+					
 					
 				}
 			}
@@ -148,6 +151,25 @@ public class Autonomous extends CommandGroup {
 		}
 		
 		
+    }
+    private void addCommand(String command, String commandValue) {
+    	switch (command) {
+    	case "Forward":
+    		addSequential( new DriveDistancePID( Double.valueOf(commandValue)));
+    		break;
+    	case "RotateR":
+    		addSequential( new TurnAnglePID( Double.valueOf(commandValue)));
+    		break;
+    	case "UnloadToSw":
+    		addSequential( new TimedLift(2));
+    		addSequential( new PutPCubeDown());
+    		break;
+    	case "RotateL":
+    		addSequential( new TurnAnglePID( -Double.valueOf(commandValue)));
+    		break;
+    	default:
+    		
+    	}
     }
 }
 
