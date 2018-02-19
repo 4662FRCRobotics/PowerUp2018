@@ -84,6 +84,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_autonomousCommand.initialize();
+		m_grabSubsystem.setTiltVertVal();
+		m_liftSubsystem.setEncoderZero();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
