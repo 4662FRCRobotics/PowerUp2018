@@ -28,7 +28,7 @@ public class LiftSubsystem extends Subsystem {
 		m_leftLiftController1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		//m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
-		kdLiftSpeed = 0.5;
+		kdLiftSpeed = 0.8;
 		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 	}
     
@@ -37,7 +37,7 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void moveLift( double speed ) {
-    	m_liftControlGroup.set(speed);
+    	m_liftControlGroup.set(speed + 0.1);
     	SmartDashboard.putNumber("Lift Encoder", m_leftLiftController1.getSelectedSensorPosition(0));
     }
     
