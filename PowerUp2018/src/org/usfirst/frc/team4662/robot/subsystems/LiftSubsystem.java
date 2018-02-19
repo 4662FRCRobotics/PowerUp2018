@@ -20,7 +20,8 @@ public class LiftSubsystem extends Subsystem {
 	private WPI_TalonSRX m_leftLiftController1;
 	//private WPI_TalonSRX m_rightLiftController1;
 	private SpeedControllerGroup m_liftControlGroup;
-	private double kdLiftSpeed;
+	private double kdLiftUpSpeed;
+	private double kdLiftDownSpeed;
 	
 	public LiftSubsystem() {
 		m_leftLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("leftLift1"));
@@ -28,7 +29,8 @@ public class LiftSubsystem extends Subsystem {
 		m_leftLiftController1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		//m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
-		kdLiftSpeed = 0.8;
+		kdLiftUpSpeed = 0.8;
+		kdLiftDownSpeed = 0.4;
 		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 	}
     
@@ -42,11 +44,11 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void moveLiftUp() {
-    	moveLift(kdLiftSpeed);
+    	moveLift(kdLiftUpSpeed);
     }
     
     public void moveLiftDown() {
-    	moveLift(-kdLiftSpeed);
+    	moveLift(-kdLiftDownSpeed);
     }
     
     public void setEncoderZero() {
