@@ -55,11 +55,11 @@ public class GrabSubsystem extends Subsystem {
 		m_dOpenIncrement = 10.0;
 		m_dCloseIncrement = m_dOpenIncrement/2;
 		m_dMaxOpenCount = m_dOpenIncrement * m_iMaxOpenIterations;
-		m_dTiltVertVal = 512.0;
-		m_dTiltFwdLiftLim = 50.0;
-		m_dTiltRevLiftLim = -50.0;
-		m_dTiltFwdLim = 400.0;
-		m_dTiltRevLim = -400.0;
+		m_dTiltVertVal = 0.52;
+		m_dTiltFwdLiftLim = 0.05;
+		m_dTiltRevLiftLim = -0.05;
+		m_dTiltFwdLim = 0.25;
+		m_dTiltRevLim = -0.25;
 		m_tiltPot = new AnalogPotentiometer(Robot.m_robotMap.getPortNumber("TiltPot"));
 		
 	}
@@ -121,7 +121,7 @@ public class GrabSubsystem extends Subsystem {
     public boolean isTiltAtTop() {
     	boolean bReturnVal = false;
     	displayLimitSwitches();
-    	if ( m_tiltPot.get() <= (m_dTiltVertVal - m_dTiltRevLim)) {
+    	if ( m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltRevLim)) {
     		bReturnVal = true;
     	} else {
     		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
@@ -131,7 +131,7 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltNearLift() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() >= (m_dTiltVertVal - m_dTiltRevLiftLim)
+    	if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltRevLiftLim)
     			&& m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltFwdLiftLim)) {
     		bReturnVal = true;
     	}

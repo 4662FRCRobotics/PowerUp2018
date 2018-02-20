@@ -22,6 +22,10 @@ public class LiftSubsystem extends Subsystem {
 	private SpeedControllerGroup m_liftControlGroup;
 	private double kdLiftUpSpeed;
 	private double kdLiftDownSpeed;
+	private double kdLiftTop;
+	private double kdLiftBottom;
+	private double kdSpeedHold;
+	private double m_dLiftSpeed;
 	
 	public LiftSubsystem() {
 		m_leftLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("leftLift1"));
@@ -30,7 +34,11 @@ public class LiftSubsystem extends Subsystem {
 		//m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
 		kdLiftUpSpeed = 0.8;
-		kdLiftDownSpeed = 0.4;
+		kdLiftDownSpeed = 0.6;
+		kdLiftTop = 8500.0;
+		kdLiftBottom = 0.0;	
+		kdSpeedHold = 0.1;
+		m_dLiftSpeed = 0.0;
 		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 	}
     
@@ -39,7 +47,14 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void moveLift( double speed ) {
-    	m_liftControlGroup.set(speed + 0.1);
+    	if ( m_leftLiftController1.getSelectedSensorPosition(0) <= kdLiftBottom
+    			|| m_leftLiftController1.getSelectedSensorPosition(0) >= kdLiftTop ) {
+    		m_liftControlGroup.set(kdSpeedHold);
+    		m_dLiftSpeed = 0.0;
+    	} else {
+    		m_liftControlGroup.set(speed + kdSpeedHold);
+    		m_dLiftSpeed = speed;
+    	}
     	SmartDashboard.putNumber("Lift Encoder", m_leftLiftController1.getSelectedSensorPosition(0));
     }
     
@@ -54,5 +69,32 @@ public class LiftSubsystem extends Subsystem {
     public void setEncoderZero() {
     	m_leftLiftController1.setSelectedSensorPosition(0, 0, 0);
     }
+    
+    public void moveLiftToTarget(double target) {
+    	if ( m_leftLiftController1.getSelectedSensorPosition(0) <= target ) {
+			moveLiftUp();
+		} else {
+			moveLiftDown();
+		}
+    }
+    
+    public boolean isLiftAtTarget(double target) {
+    	boolean bReturnVal = false;
+    	if ( m_dLiftSpeed < 0 ) {
+    		if ( m_leftLiftController1.getSelectedSensorPosition(0) <= target ) {
+    			bReturnVal = true;
+    		}
+    	} else { 
+    		if ( m_dLiftSpeed > 0 ) {
+    			if ( m_leftLiftController1.getSelectedSensorPosition(0) >= target ) {
+    				bReturnVal = true;
+    			}
+    		} else {
+    			bReturnVal = true;
+    		}
+    	}
+    	return bReturnVal;
+    }
+    
 }
 
