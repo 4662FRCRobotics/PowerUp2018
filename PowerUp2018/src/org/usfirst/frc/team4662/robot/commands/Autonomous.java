@@ -161,7 +161,13 @@ public class Autonomous extends CommandGroup {
     		addSequential( new TurnAnglePID( Double.valueOf(commandValue)));
     		break;
     	case "UnloadToSw":
-    		addSequential( new TimedLift(2));
+    		//addSequential( new TimedLift(2));
+    		addSequential( new MoveLiftToTarget(3000));
+    		addSequential( new PutPCubeDown());
+    		break;
+    	case "UnloadToSc":
+    		//addSequential( new TimedLift(2));
+    		addSequential( new MoveLiftToTarget(5000));
     		addSequential( new PutPCubeDown());
     		break;
     	case "RotateL":

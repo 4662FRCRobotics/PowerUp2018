@@ -1,7 +1,6 @@
 package org.usfirst.frc.team4662.robot.subsystems;
 
 import org.usfirst.frc.team4662.robot.Robot;
-import org.usfirst.frc.team4662.robot.commands.Display;
 import org.usfirst.frc.team4662.robot.commands.Tilt;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -30,7 +29,7 @@ public class GrabSubsystem extends Subsystem {
 	private double m_dCurrentOpenCount;
 	private double m_dOpenIncrement;
 	private double m_dCloseIncrement;
-	private final int m_iMaxOpenIterations = 40;
+	private final int m_iMaxOpenIterations = 15;
 	private AnalogPotentiometer m_tiltPot;
 	private double m_dTiltPotVal;
 	private double m_dTiltVertVal;
@@ -41,25 +40,25 @@ public class GrabSubsystem extends Subsystem {
 	
 	public GrabSubsystem() {
 		m_grabController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabController"));
-		m_grabController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-		m_grabController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		//m_grabController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		//m_grabController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 0);
 		m_grabController.overrideLimitSwitchesEnable(true);
 		m_tiltController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("TiltController"));
 		m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-		m_dGrabSpeed = 0.3; 
-		m_dReleaseSpeed = 0.5;
-		m_dTiltSpeed = 0.3; 
+		m_dGrabSpeed = 0.7; 
+		m_dReleaseSpeed = 1.0;
+		m_dTiltSpeed = 0.8;
 		m_bIsGrabOpen = false;
 		m_dCurrentOpenCount = 0.0;
 		m_dOpenIncrement = 10.0;
 		m_dCloseIncrement = m_dOpenIncrement/2;
 		m_dMaxOpenCount = m_dOpenIncrement * m_iMaxOpenIterations;
-		m_dTiltVertVal = 0.52;
+		m_dTiltVertVal = Robot.m_robotMap.getDeviceDoubleVal("TiltPot", "VertVal", 0.52);
 		m_dTiltFwdLiftLim = 0.05;
-		m_dTiltRevLiftLim = -0.05;
-		m_dTiltFwdLim = 0.25;
-		m_dTiltRevLim = -0.25;
+		m_dTiltRevLiftLim = 0.05;
+		m_dTiltFwdLim = 0.3;
+		m_dTiltRevLim = 0.3;
 		m_tiltPot = new AnalogPotentiometer(Robot.m_robotMap.getPortNumber("TiltPot"));
 		
 	}
@@ -71,24 +70,48 @@ public class GrabSubsystem extends Subsystem {
     }
     
     
-    public void displayLimitSwitches() {
+    public void displayLimitSwitches(double speed) {
+    	System.out.println("In Dashboard Display Limits" + Robot.m_robotMap.isDashboardTest());
     	if ( Robot.m_robotMap.isDashboardTest()) {
     		SmartDashboard.putBoolean("Grab Limit Forward", m_grabController.getSensorCollection().isFwdLimitSwitchClosed());
         	SmartDashboard.putBoolean("Grab Limit Reverse", m_grabController.getSensorCollection().isRevLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Forward", m_tiltController.getSensorCollection().isFwdLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Reverse", m_tiltController.getSensorCollection().isRevLimitSwitchClosed());
         	SmartDashboard.putNumber("TiltPotValue", m_tiltPot.get());
+        	SmartDashboard.putBoolean("Is Tilt Falling", isTiltFalling(speed));
+        	SmartDashboard.putBoolean("Is Tilt At Bottom", isTiltAtBottom());
+        	SmartDashboard.putBoolean("Is Tilt At Top", isTiltAtTop());
+        	SmartDashboard.putBoolean("Is Tilt Near Lift", isTiltNearLift());
+        	SmartDashboard.putBoolean("Is Grab Closed", isGrabClosed());
+        	SmartDashboard.putBoolean("Is Grab Open", isGrabOpen());
+        	SmartDashboard.putBoolean("Is Grab Max", isGrabMax());
+        	
+        	SmartDashboard.putNumber("Tilt Speed", speed);
+        	
     	}
     }
    
     public void setTiltSpeed(double speed) {
-    	if ( isTiltAtBottom() || isTiltAtTop() 
-    			|| (isTiltNearLift() && isGrabOpen() ) ) {
-    		m_tiltController.set(0);
+    	double dSpeed = speed;
+    	if ( (isTiltAtBottom() && speed < 0) || (isTiltAtTop() && speed > 0) ) 
+    	{
+    		dSpeed = 0.0;
     	} else {
-    		m_tiltController.set(speed);
+    		if ( isTiltFalling(speed) ) {
+    			dSpeed = dSpeed * 0.5;
+    		}
     	}
-    	displayLimitSwitches();
+    	m_tiltController.set(dSpeed);
+    	displayLimitSwitches(dSpeed);
+    }
+    
+    private boolean isTiltFalling( double speed ) {
+    	boolean bReturnVal = false;
+    	if ( (speed < 0 && m_tiltPot.get() >= m_dTiltVertVal) 
+    			|| (speed > 0 && m_tiltPot.get() <= m_dTiltVertVal) ) {
+    		bReturnVal = true;
+    	}
+    	return bReturnVal;
     }
     
     public void tiltUp() {
@@ -109,7 +132,6 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltAtBottom() {
     	boolean bReturnVal = false;
-    	displayLimitSwitches();
     	if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltFwdLim)) {
     		bReturnVal = true;
     	} else {
@@ -120,8 +142,7 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltAtTop() {
     	boolean bReturnVal = false;
-    	displayLimitSwitches();
-    	if ( m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltRevLim)) {
+    	if ( m_tiltPot.get() <= (m_dTiltVertVal - m_dTiltRevLim)) {
     		bReturnVal = true;
     	} else {
     		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
@@ -131,7 +152,7 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltNearLift() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltRevLiftLim)
+    	if ( m_tiltPot.get() >= (m_dTiltVertVal - m_dTiltRevLiftLim)
     			&& m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltFwdLiftLim)) {
     		bReturnVal = true;
     	}
@@ -139,31 +160,33 @@ public class GrabSubsystem extends Subsystem {
     }
     
     public void grabClose() {
+    	//m_grabController.set(-1);
     	if (isGrabClosed()) {
     		setGrabOpenFalse();
         	grabStop();
+        	m_dCurrentOpenCount = 0.0;
     	} else {
-    		m_grabController.set(m_dGrabSpeed);
-        	displayLimitSwitches();
+    		m_grabController.set(-m_dGrabSpeed);
+        	displayLimitSwitches(0);
         	m_dCurrentOpenCount = m_dCurrentOpenCount - m_dCloseIncrement;
     	}
     }
     public void grabOpen() {
+    	//m_grabController.set(1);
     	if (isGrabMax()) {
     		setGrabOpenTrue();
     		grabStop();
     	} else {
-    		m_grabController.set(-m_dReleaseSpeed);
-    		displayLimitSwitches();
+    		m_grabController.set(m_dReleaseSpeed);
+    		displayLimitSwitches(0);
         	m_dCurrentOpenCount = m_dCurrentOpenCount + m_dOpenIncrement;
     	}
     }
     public void grabStop() {
     	m_grabController.set(0.0);
-    	m_dCurrentOpenCount = 0.0;
     }
     public boolean isGrabClosed() {
-    	return !m_grabController.getSensorCollection().isRevLimitSwitchClosed();  	
+    	return m_grabController.getSensorCollection().isRevLimitSwitchClosed();  	
     }
     public boolean isGrabOpen() {
     	return m_bIsGrabOpen;
@@ -175,6 +198,8 @@ public class GrabSubsystem extends Subsystem {
     	m_bIsGrabOpen = false;
     }
     public boolean isGrabMax() {
+    	SmartDashboard.putNumber("CurrentOpenCount", m_dCurrentOpenCount);
+    	SmartDashboard.putNumber("MaxOpenCount", m_dMaxOpenCount);
     	return (m_dCurrentOpenCount > m_dMaxOpenCount);
     }
 }

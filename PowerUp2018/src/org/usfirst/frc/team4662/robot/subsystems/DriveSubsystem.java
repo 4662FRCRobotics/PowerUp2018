@@ -77,6 +77,7 @@ public class DriveSubsystem extends Subsystem {
 		m_rightController2.setSensorPhase(false);		
 		
 		//instantiation for drive a distance	
+		m_dDistance = 0;
 		m_dDriveDistanceP = Robot.m_robotMap.getPIDPVal("DriveDistance", 0.2);
 		m_dDriveDistanceI = Robot.m_robotMap.getPIDIVal("DriveDistance", 0.0);
 		m_dDriveDistanceD = Robot.m_robotMap.getPIDDVal("DriveDistance", 0.4);
@@ -86,8 +87,9 @@ public class DriveSubsystem extends Subsystem {
 		m_dEncoderPulseCnt = 20 * 2 * 2;
 		// 2 channel quadrature output with 20 pulses per channel per revolution for sensing speed and direction.
 		//times 2 for rise and fall for pulse
-		m_dMotorToAxleReduction = 60/14;
+		m_dMotorToAxleReduction = ( 50/12 ) * ( 40/34 );
 		m_dWheelDiameter = 6.0;
+		m_dDistance = getDashboardDistance();
 		
 		//instantiation for turn to angle
 		m_AHRSnavX = new AHRS(SPI.Port.kMXP);
@@ -97,7 +99,8 @@ public class DriveSubsystem extends Subsystem {
 		m_turnAngle = new PIDController(m_dTurnAngleP, m_dTurnAngleI, m_dTurnAngleD, new getSourceAngle(), new putOutputTurn() );
 		m_dTurnAngleTolerance = Robot.m_robotMap.getPIDToleranceVal("TurnAngle", 2);
 		m_dAngle = 0;
-		SmartDashboard.putNumber("TurnAngle", m_dAngle);
+		m_dAngle = getDashboardAngle();
+		
 		//instantiation for keepheading
 		m_dkeepHeadingP = Robot.m_robotMap.getPIDPVal("keepHeading", 0.2);
 		m_dkeepHeadingI = Robot.m_robotMap.getPIDIVal("keepHeading", 0.0);
@@ -134,6 +137,24 @@ public class DriveSubsystem extends Subsystem {
     //******************************************************************************
     //this block is for the drive distance pid control
     //******************************************************************************
+    public double getDashboardDistance() {
+    	if ( Robot.m_robotMap.isDashboardTest()) {
+    		m_dDistance = SmartDashboard.getNumber("DriveDistance", m_dDistance);
+        	m_dDriveDistanceP = SmartDashboard.getNumber("DriveDistanceP", m_dDriveDistanceP);
+    		m_dDriveDistanceI = SmartDashboard.getNumber("DriveDistanceI", m_dDriveDistanceI);
+    		m_dDriveDistanceD = SmartDashboard.getNumber("DriveDistanceD", m_dDriveDistanceD);
+    		m_dDriveDistanceTolerance = SmartDashboard.getNumber("DriveDistanceTolerance", m_dDriveDistanceTolerance);
+    		m_dDriveDistanceSpeed = SmartDashboard.getNumber("DriveDistanceSpeed", m_dDriveDistanceSpeed);
+    		SmartDashboard.putNumber("DriveDistance", m_dDistance);
+        	SmartDashboard.putNumber("DriveDistanceP", m_dDriveDistanceP);
+    		SmartDashboard.putNumber("DriveDistanceI", m_dDriveDistanceI);
+    		SmartDashboard.putNumber("DriveDistanceD", m_dDriveDistanceD);
+    		SmartDashboard.putNumber("DriveDistanceTolerance", m_dDriveDistanceTolerance);
+    		SmartDashboard.putNumber("DriveDistanceSpeed", m_dDriveDistanceSpeed);
+    	}
+    	
+    	return m_dDistance;
+    }
     
     public void disableDriveDistance() {
     	m_DriveDistance.disable();
@@ -145,7 +166,7 @@ public class DriveSubsystem extends Subsystem {
 		SmartDashboard.putNumber("Encoder target", pidEncoderTarget);
 		m_DriveDistance.reset();
 		m_leftController1.setSelectedSensorPosition(0, 0, 0);
-		m_rightController1.setSelectedSensorPosition(0, 0, 0);
+		m_rightController2.setSelectedSensorPosition(0, 0, 0);
 		//0 encoders
 		m_DriveDistance.setInputRange(-Math.abs(pidEncoderTarget), Math.abs(pidEncoderTarget));
 		m_DriveDistance.setOutputRange(-m_dDriveDistanceSpeed , m_dDriveDistanceSpeed);
@@ -192,9 +213,19 @@ public class DriveSubsystem extends Subsystem {
     
     //gets the turn angle from the dashboard
     public double getDashboardAngle() {
-    	double dAngle = SmartDashboard.getNumber("TurnAngleTest", m_dAngle);
-    	SmartDashboard.putNumber("TurnAngleTest", dAngle);
-    	return dAngle;
+    	if (Robot.m_robotMap.isDashboardTest()) {
+    		m_dTurnAngleP = SmartDashboard.getNumber("TurnAngleP", m_dTurnAngleP);
+    		m_dTurnAngleI = SmartDashboard.getNumber("TurnAngleI", m_dTurnAngleI);
+    		m_dTurnAngleD = SmartDashboard.getNumber("TurnAngleD", m_dTurnAngleD);
+    		m_dTurnAngleTolerance = SmartDashboard.getNumber("TurnAngleTolerance", m_dTurnAngleTolerance);
+    		m_dAngle = SmartDashboard.getNumber("TurnAngleTest", m_dAngle);
+    		SmartDashboard.putNumber("TurnAngleP", m_dTurnAngleP);
+    		SmartDashboard.putNumber("TurnAngleI", m_dTurnAngleI);
+    		SmartDashboard.putNumber("TurnAngleD", m_dTurnAngleD);
+    		SmartDashboard.putNumber("TurnAngleTolerance", m_dTurnAngleTolerance);
+    		SmartDashboard.putNumber("TurnAngleTest", m_dAngle);
+    	}
+    	return m_dAngle;
     }
     
     //******************************************************************************
@@ -290,7 +321,7 @@ public class DriveSubsystem extends Subsystem {
 
 		@Override
 		public void pidWrite(double output) {
-			arcadeDrive(output, 0);
+			arcadeDrive(output, m_dSteeringHeading);
 			// TODO Auto-generated method stub
 			
 		}

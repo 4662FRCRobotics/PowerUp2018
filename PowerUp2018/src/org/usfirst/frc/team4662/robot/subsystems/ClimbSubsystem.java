@@ -30,6 +30,7 @@ public class ClimbSubsystem extends Subsystem {
     
     public void moveClimb( double speed ) {
     	m_ClimbControlGroup.set(speed);
+    	System.out.println("Yer Boi");
     }
     
     public void climbUp() {

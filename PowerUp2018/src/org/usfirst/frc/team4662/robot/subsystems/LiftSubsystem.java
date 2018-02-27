@@ -6,6 +6,7 @@ import org.usfirst.frc.team4662.robot.commands.MoveLift;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -29,14 +30,15 @@ public class LiftSubsystem extends Subsystem {
 	
 	public LiftSubsystem() {
 		m_leftLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("leftLift1"));
+		m_leftLiftController1.setNeutralMode(NeutralMode.Brake);
 		m_leftLiftController1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_leftLiftController1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		//m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
 		kdLiftUpSpeed = 0.8;
 		kdLiftDownSpeed = 0.6;
-		kdLiftTop = 8500.0;
-		kdLiftBottom = 0.0;	
+		kdLiftTop = 5400.0;
+		kdLiftBottom = -2500;	
 		kdSpeedHold = 0.1;
 		m_dLiftSpeed = 0.0;
 		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
@@ -47,8 +49,10 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void moveLift( double speed ) {
-    	if ( m_leftLiftController1.getSelectedSensorPosition(0) <= kdLiftBottom
-    			|| m_leftLiftController1.getSelectedSensorPosition(0) >= kdLiftTop ) {
+    	if ( ( m_leftLiftController1.getSelectedSensorPosition(0) <= kdLiftBottom
+    			&& speed < 0)
+    			|| ( m_leftLiftController1.getSelectedSensorPosition(0) >= kdLiftTop 
+    			&& speed > 0 ) ) {
     		m_liftControlGroup.set(kdSpeedHold);
     		m_dLiftSpeed = 0.0;
     	} else {
@@ -56,6 +60,11 @@ public class LiftSubsystem extends Subsystem {
     		m_dLiftSpeed = speed;
     	}
     	SmartDashboard.putNumber("Lift Encoder", m_leftLiftController1.getSelectedSensorPosition(0));
+    	if (Robot.m_robotMap.isDashboardTest()) {
+    		SmartDashboard.putBoolean("LiftUpperLimit", m_leftLiftController1.getSensorCollection().isFwdLimitSwitchClosed());
+    		SmartDashboard.putBoolean("LiftBottomLimit", m_leftLiftController1.getSensorCollection().isRevLimitSwitchClosed());
+    		SmartDashboard.putNumber("LiftSpeed", speed);
+    	}
     }
     
     public void moveLiftUp() {

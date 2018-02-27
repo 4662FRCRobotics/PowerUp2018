@@ -59,9 +59,13 @@ public class OI {
 		m_putPCubeDown = new JoystickButton(m_operatorPad, 2);
 		m_putPCubeDown.whenPressed(new PutPCubeDown());
 		
+		SmartDashboard.putData("setLiftEncoderBottom", new SetLiftEncoderBottom());
+		SmartDashboard.putData("SetTiltVertical", new SetTiltPotVert());
+		
 		if( Robot.m_robotMap.isDashboardTest()) {
 			SmartDashboard.putData("PIDTest", new TurnAnglePID());
 			SmartDashboard.putData("DriveDistancePID", new DriveDistancePID());
+			
 		}
 
 	}

@@ -103,6 +103,7 @@ public class RobotMap {
 				nodeChildVal = nodeList.item(i).getNodeValue();
 			}
 		} catch (XPathExpressionException e){
+			System.out.println( "getNodeChildSVal: " + argNode + ", " + nodeName + ", " + nodeValue + ", " + tagName + ". ");
 		}
 		
 		return nodeChildVal;
@@ -145,16 +146,21 @@ public class RobotMap {
 		
 	}
 	
+	public double getDeviceDoubleVal(String nodeValue, String tagname, double dDefaultVal){
+		return 	getDoubleValue("device", "name", nodeValue, tagname, dDefaultVal);
+		
+	}
+	
 	public int getPortNumber(String nodeValue){
 		return getIntValue("device", "name", nodeValue, "port", -1);
 	}
 	
 	private double getDoubleValue(String argNode, String nodeName, String nodeValue, String tagName, double dDefault) {
-		double dVal = dDefault;
+		double dVal = dDefault; 
 		try {
 			dVal = Double.valueOf( getNodeChildSVal(argNode, nodeName, nodeValue, tagName));
 		} catch(Exception e){
-			
+			System.out.println( "getDoubleValue: " + argNode + ", " + nodeName + ", " + nodeValue + ", " + tagName + ". ");
 		}
 		return dVal;
 	}
@@ -164,7 +170,7 @@ public class RobotMap {
 		try {
 			iVal = Integer.valueOf( getNodeChildSVal(argNode, nodeName, nodeValue, tagName));
 		} catch(Exception e){
-			
+			System.out.println( "getIntValue: " + argNode + ", " + nodeName + ", " + nodeValue + ", " + tagName + ". ");
 		}
 		return iVal;
 	}

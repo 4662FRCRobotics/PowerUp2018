@@ -7,12 +7,13 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Display extends Command {
+public class GrabCloseForce extends Command {
 
-    public Display() {
+    public GrabCloseForce() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_grabSubsystem);
+    	setInterruptible(false);
     }
 
     // Called just before this Command runs the first time
@@ -21,20 +22,22 @@ public class Display extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_grabSubsystem.displayLimitSwitches();
+    	Robot.m_grabSubsystem.grabClose();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return Robot.m_grabSubsystem.isGrabClosed();
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.m_grabSubsystem.grabStop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }
