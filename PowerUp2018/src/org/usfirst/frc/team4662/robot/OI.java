@@ -32,6 +32,8 @@ public class OI {
 	public JoystickButton m_climbDown;
 	public JoystickButton m_putPCubeDown;
 	public JoystickButton toggleDriveCamera;
+	public JoystickButton m_enableSafety;
+	public JoystickButton m_disableSafety;
 	
 	public OI() {
 		
@@ -58,6 +60,10 @@ public class OI {
 		m_grabOpen.whileHeld(new GrabOpen());
 		m_putPCubeDown = new JoystickButton(m_operatorPad, 2);
 		m_putPCubeDown.whenPressed(new PutPCubeDown());
+		m_enableSafety = new JoystickButton(m_operatorPad, 9);
+		m_enableSafety.whenPressed(new SetGrabSubsystemSafety(true));
+		m_disableSafety = new JoystickButton(m_operatorPad, 10);
+		m_disableSafety.whenPressed(new SetGrabSubsystemSafety(false));
 		
 		SmartDashboard.putData("setLiftEncoderBottom", new SetLiftEncoderBottom());
 		SmartDashboard.putData("SetTiltVertical", new SetTiltPotVert());

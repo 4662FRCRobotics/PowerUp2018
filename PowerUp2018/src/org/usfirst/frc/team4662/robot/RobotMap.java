@@ -102,6 +102,10 @@ public class RobotMap {
 			for (int i= 0; i < nodeList.getLength(); i++) {
 				nodeChildVal = nodeList.item(i).getNodeValue();
 			}
+		
+			if (nodeList.getLength() == 0){
+				System.out.println( "getNodeChildSVal: " + argNode + ", " + nodeName + ", " + nodeValue + ", " + tagName + ". ");
+			}
 		} catch (XPathExpressionException e){
 			System.out.println( "getNodeChildSVal: " + argNode + ", " + nodeName + ", " + nodeValue + ", " + tagName + ". ");
 		}
