@@ -55,17 +55,17 @@ public class GrabSubsystem extends Subsystem {
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 0.7; 
 		m_dReleaseSpeed = 1.0;
-		m_dTiltSpeed = 0.8;
+		m_dTiltSpeed = 0.5;
 		m_bIsGrabOpen = false;
 		m_dCurrentOpenCount = 0.0;
 		m_dOpenIncrement = 10.0;
 		m_dCloseIncrement = m_dOpenIncrement/2;
 		m_dMaxOpenCount = m_dOpenIncrement * m_iMaxOpenIterations;
-		m_dTiltVertVal = Robot.m_robotMap.getDeviceDoubleVal("TiltPot", "VertVal", 0.52);
+		m_dTiltVertVal = Robot.m_robotMap.getDeviceDoubleVal("TiltPot", "VertVal", .485);
 		m_dTiltFwdLiftLim = 0.05;
 		m_dTiltRevLiftLim = 0.05;
-		m_dTiltFwdLim = 0.3;
-		m_dTiltRevLim = 0.3;
+		m_dTiltFwdLim = 0.45;
+		m_dTiltRevLim = 0.17;
 		m_tiltPot = new AnalogPotentiometer(Robot.m_robotMap.getPortNumber("TiltPot"));
 		m_switchTiltVertical = new DigitalInput(0);
 		m_bSafetyEnable = true;
@@ -103,7 +103,7 @@ public class GrabSubsystem extends Subsystem {
         	SmartDashboard.putBoolean("Is Grab Closed", isGrabClosed());
         	SmartDashboard.putBoolean("Is Grab Open", isGrabOpen());
         	SmartDashboard.putBoolean("Is Grab Max", isGrabMax());
-        	
+        	SmartDashboard.putBoolean("Is Tilt Vertical", isTiltVertical());
         	SmartDashboard.putNumber("Tilt Speed", speed);
         	
     	}
@@ -128,8 +128,8 @@ public class GrabSubsystem extends Subsystem {
     
     private boolean isTiltFalling( double speed ) {
     	boolean bReturnVal = false;
-    	if ( (speed < 0 && m_tiltPot.get() >= m_dTiltVertVal) 
-    			|| (speed > 0 && m_tiltPot.get() <= m_dTiltVertVal) ) {
+    	if ( (speed < 0 && m_tiltPot.get() <= m_dTiltVertVal) 
+    			|| (speed > 0 && m_tiltPot.get() >= m_dTiltVertVal) ) {
     		bReturnVal = true;
     	}
     	return bReturnVal;
@@ -154,20 +154,20 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltAtBottom() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltFwdLim)) {
+    	if ( m_tiltPot.get() <= (m_dTiltVertVal - m_dTiltFwdLim)) {
     		bReturnVal = true;
     	} else {
-    		bReturnVal = m_tiltController.getSensorCollection().isFwdLimitSwitchClosed();
+    		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
     	}
     	return bReturnVal;
     }
     
     public boolean isTiltAtTop() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() <= (m_dTiltVertVal - m_dTiltRevLim)) {
+    	if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltRevLim)) {
     		bReturnVal = true;
     	} else {
-    		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
+    		bReturnVal = m_tiltController.getSensorCollection().isFwdLimitSwitchClosed();
     	}
     	return bReturnVal;
     }
@@ -178,7 +178,7 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltNearLift() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltFwdLiftLim)) {
+    	if ( m_tiltPot.get() >= (m_dTiltVertVal - m_dTiltFwdLiftLim)) {
     		bReturnVal = true;
     	}
     	return bReturnVal;
@@ -186,7 +186,7 @@ public class GrabSubsystem extends Subsystem {
     
     public boolean isTiltForward() {
     	boolean bReturnVal = false;
-    	if ( m_tiltPot.get() > m_dTiltVertVal) {
+    	if ( m_tiltPot.get() < m_dTiltVertVal) {
     		bReturnVal = true;
     	}
     	return bReturnVal;
@@ -246,9 +246,10 @@ public class GrabSubsystem extends Subsystem {
     	m_bIsGrabOpen = false;
     }
     public boolean isGrabMax() {
-    	SmartDashboard.putNumber("CurrentOpenCount", m_dCurrentOpenCount);
-    	SmartDashboard.putNumber("MaxOpenCount", m_dMaxOpenCount);
-    	return (m_dCurrentOpenCount > m_dMaxOpenCount);
+    	//SmartDashboard.putNumber("CurrentOpenCount", m_dCurrentOpenCount);
+    	//SmartDashboard.putNumber("MaxOpenCount", m_dMaxOpenCount);
+    	//return (m_dCurrentOpenCount > m_dMaxOpenCount);
+    	return false;
     }
 }
 

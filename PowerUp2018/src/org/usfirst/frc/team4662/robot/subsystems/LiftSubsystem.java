@@ -37,7 +37,7 @@ public class LiftSubsystem extends Subsystem {
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
 		kdLiftUpSpeed = 0.8;
 		kdLiftDownSpeed = 0.6;
-		kdLiftTop = 5400.0;
+		kdLiftTop = 9000.0;
 		kdLiftBottom = -2500;	
 		kdSpeedHold = 0.1;
 		m_dLiftSpeed = 0.0;
