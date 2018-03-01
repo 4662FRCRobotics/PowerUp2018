@@ -34,7 +34,7 @@ public class ClimbSubsystem extends Subsystem {
     }
     
     public void climbUp() {
-    	moveClimb(kdClimbSpeed * kdClimbDirection);
+    	moveClimb((kdClimbSpeed + (Robot.m_oi.m_driveStick.getThrottle() + 1)/ 4) * kdClimbDirection);
     }
 }
 

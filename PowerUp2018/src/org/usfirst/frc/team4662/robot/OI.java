@@ -41,7 +41,7 @@ public class OI {
 		m_driveStick = new Joystick(0);
 		m_keepHeading = new JoystickButton(m_driveStick,2);
 		m_keepHeading.whileHeld(new KeepHeadingPID());
-		m_climbUp = new JoystickButton(m_driveStick, 3);
+		m_climbUp = new JoystickButton(m_driveStick, 11);
 		m_climbUp.whileHeld(new ClimbUp());
 		toggleDriveCamera = new JoystickButton(m_driveStick, 5);
 		toggleDriveCamera.whenPressed(new ToggleDriveCamera());
