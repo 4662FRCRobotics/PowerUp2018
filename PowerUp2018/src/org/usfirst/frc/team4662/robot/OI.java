@@ -34,6 +34,7 @@ public class OI {
 	public JoystickButton toggleDriveCamera;
 	public JoystickButton m_enableSafety;
 	public JoystickButton m_disableSafety;
+	public JoystickButton m_tiltVertical;
 	
 	public OI() {
 		
@@ -54,6 +55,8 @@ public class OI {
 		m_tiltUp.whileHeld(new TiltUp());
 		m_tiltDown = new JoystickButton(m_operatorPad, 8);
 		m_tiltDown.whileHeld(new TiltDown());
+		m_tiltVertical = new JoystickButton(m_operatorPad, 4);
+		m_tiltVertical.whenPressed(new TiltToVertical());
 		m_grabClose = new JoystickButton(m_operatorPad, 1);
 		m_grabClose.whileHeld(new GrabClose());
 		m_grabOpen = new JoystickButton(m_operatorPad, 3);

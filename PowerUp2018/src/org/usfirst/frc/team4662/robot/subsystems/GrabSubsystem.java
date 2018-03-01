@@ -3,11 +3,14 @@ package org.usfirst.frc.team4662.robot.subsystems;
 import org.usfirst.frc.team4662.robot.Robot;
 import org.usfirst.frc.team4662.robot.commands.Tilt;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -31,6 +34,7 @@ public class GrabSubsystem extends Subsystem {
 	private double m_dCloseIncrement;
 	private final int m_iMaxOpenIterations = 15;
 	private AnalogPotentiometer m_tiltPot;
+	private DigitalInput m_switchTiltVertical;
 	private double m_dTiltPotVal;
 	private double m_dTiltVertVal;
 	private double m_dTiltFwdLiftLim;
@@ -47,6 +51,8 @@ public class GrabSubsystem extends Subsystem {
 		m_tiltController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("TiltController"));
 		m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		m_tiltController.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 0.7; 
 		m_dReleaseSpeed = 1.0;
 		m_dTiltSpeed = 0.8;
@@ -61,7 +67,9 @@ public class GrabSubsystem extends Subsystem {
 		m_dTiltFwdLim = 0.3;
 		m_dTiltRevLim = 0.3;
 		m_tiltPot = new AnalogPotentiometer(Robot.m_robotMap.getPortNumber("TiltPot"));
+		m_switchTiltVertical = new DigitalInput(0);
 		m_bSafetyEnable = true;
+		
 		
 	}
 	
@@ -86,6 +94,7 @@ public class GrabSubsystem extends Subsystem {
         	SmartDashboard.putBoolean("Grab Limit Reverse", m_grabController.getSensorCollection().isRevLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Forward", m_tiltController.getSensorCollection().isFwdLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Reverse", m_tiltController.getSensorCollection().isRevLimitSwitchClosed());
+        	SmartDashboard.putNumber("Tilt Encoder", m_tiltController.getSelectedSensorPosition(0));
         	SmartDashboard.putNumber("TiltPotValue", m_tiltPot.get());
         	SmartDashboard.putBoolean("Is Tilt Falling", isTiltFalling(speed));
         	SmartDashboard.putBoolean("Is Tilt At Bottom", isTiltAtBottom());
@@ -140,6 +149,7 @@ public class GrabSubsystem extends Subsystem {
     
     public void setTiltVertVal() {
     	m_dTiltVertVal = m_tiltPot.get();
+    	m_tiltController.setSelectedSensorPosition(0, 0, 0);
     }
     
     public boolean isTiltAtBottom() {
@@ -162,9 +172,21 @@ public class GrabSubsystem extends Subsystem {
     	return bReturnVal;
     }
     
+    public boolean isTiltVertical() {
+    	return m_switchTiltVertical.get();
+    }
+    
     public boolean isTiltNearLift() {
     	boolean bReturnVal = false;
     	if ( m_tiltPot.get() <= (m_dTiltVertVal + m_dTiltFwdLiftLim)) {
+    		bReturnVal = true;
+    	}
+    	return bReturnVal;
+    }
+    
+    public boolean isTiltForward() {
+    	boolean bReturnVal = false;
+    	if ( m_tiltPot.get() > m_dTiltVertVal) {
     		bReturnVal = true;
     	}
     	return bReturnVal;
