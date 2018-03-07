@@ -54,6 +54,7 @@ public class Autonomous extends CommandGroup {
         // arm.
     	
     	try {
+    		System.out.println("In Auto Constructor");
     		File patternAndCommandFile = new File(m_strPatternxmlFilename);
     		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     		DocumentBuilder dBuilder;
@@ -62,6 +63,7 @@ public class Autonomous extends CommandGroup {
     		
     		m_patternAndCommandDoc = dBuilder.parse(patternAndCommandFile);
     		m_patternAndCommandDoc.getDocumentElement().normalize();
+    		System.out.println("In Auto Constructor" + m_patternAndCommandDoc);
     		m_xPath = XPathFactory.newInstance().newXPath();
     		
     	} catch (Exception e){
@@ -103,7 +105,11 @@ public class Autonomous extends CommandGroup {
 			
 	    	String searchExpr = "//stratpo[@name=\"" + m_strStratPo + "\"]//Pattern[@fieldlayout=\"" + gameData.substring(0, 2)  + "\"]/text()";
 	    	SmartDashboard.putString("searchexpr", searchExpr);
+	    	System.out.println(searchExpr);
+			System.out.println(m_patternAndCommandDoc);
+			System.out.println(m_xPath);
 			NodeList nodeList = (NodeList) m_xPath.compile(searchExpr).evaluate(m_patternAndCommandDoc, XPathConstants.NODESET);
+			
 			if (nodeList.getLength()==1) {
 				m_strPattern = nodeList.item(0).getNodeValue();
 				SmartDashboard.putString("Pattern", m_strPattern);
@@ -170,6 +176,8 @@ public class Autonomous extends CommandGroup {
     		break;
     	case "MoveLiftToTarget":
     		addSequential( new MoveLiftToTarget(Double.valueOf(commandValue)));
+    		break;
+    		
     	case "RotateL":
     		addSequential( new TurnAnglePID( -Double.valueOf(commandValue)));
     		break;

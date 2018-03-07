@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 		m_grabSubsystem = new GrabSubsystem(); 
 		m_climbSubsystem = new ClimbSubsystem();
 		m_driverCam = new DriverCam();
-		m_autonomousCommand = new Autonomous();
+		//m_autonomousCommand = new Autonomous();
 		m_oi = new OI();
 		
 		// chooser.addObject("My Auto", new MyAutoCommand());
@@ -83,6 +83,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		m_autonomousCommand = new Autonomous();
 		m_autonomousCommand.initialize();
 		m_grabSubsystem.setTiltVertVal();
 		m_liftSubsystem.setEncoderZero();
@@ -93,7 +94,7 @@ public class Robot extends TimedRobot {
 		 * = new MyAutoCommand(); break; case "Default Auto": default:
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
-
+		System.out.println("Before Auto Command Start");
 		// schedule the autonomous command (example)
 		if (m_autonomousCommand != null)
 			m_autonomousCommand.start();

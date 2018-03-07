@@ -20,21 +20,21 @@ public class MoveLiftToTarget extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.m_liftSubsystem.enableLiftPID(m_dTarget);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_liftSubsystem.moveLiftToTarget(m_dTarget);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.m_liftSubsystem.isLiftAtTarget(m_dTarget);
+        return Robot.m_liftSubsystem.isLiftOnTarget();
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.m_liftSubsystem.moveLift(0);
+    	Robot.m_liftSubsystem.disableLiftPID();
     }
 
     // Called when another command which requires one or more of the same

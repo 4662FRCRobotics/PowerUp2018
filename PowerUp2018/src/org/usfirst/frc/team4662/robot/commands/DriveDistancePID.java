@@ -25,7 +25,7 @@ public class DriveDistancePID extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_driveSubsystem);
-    	SmartDashboard.putNumber("DriveDistance", 0);
+    	SmartDashboard.putNumber("DriveDistance", 10);
     	m_bIsDashboard = true;
     }
 
@@ -40,7 +40,7 @@ public class DriveDistancePID extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    }
+   }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {

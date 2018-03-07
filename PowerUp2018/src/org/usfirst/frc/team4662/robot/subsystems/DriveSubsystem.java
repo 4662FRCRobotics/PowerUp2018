@@ -81,7 +81,7 @@ public class DriveSubsystem extends Subsystem {
 		m_dDriveDistanceP = Robot.m_robotMap.getPIDPVal("DriveDistance", 0.2);
 		m_dDriveDistanceI = Robot.m_robotMap.getPIDIVal("DriveDistance", 0.0);
 		m_dDriveDistanceD = Robot.m_robotMap.getPIDDVal("DriveDistance", 0.4);
-		m_DriveDistance = new PIDController(m_dDriveDistanceP, m_dDriveDistanceI, m_dDriveDistanceD, new getLeftEncoder(), new putDriveDistance() );
+		m_DriveDistance = new PIDController(m_dDriveDistanceP, m_dDriveDistanceI, m_dDriveDistanceD, new getRightEncoder(), new putDriveDistance() );
 		m_dDriveDistanceTolerance = Robot.m_robotMap.getPIDToleranceVal("DriveDistance", 2);
 		m_dDriveDistanceSpeed = 0.5;
 		m_dEncoderPulseCnt = 20 * 2 * 2;
@@ -162,7 +162,7 @@ public class DriveSubsystem extends Subsystem {
     
     public void setDriveDistance(double distance) {
     	
-		double pidEncoderTarget = -12 * distance * m_dEncoderPulseCnt * m_dMotorToAxleReduction / (m_dWheelDiameter * Math.PI);
+		double pidEncoderTarget = 12 * distance * m_dEncoderPulseCnt * m_dMotorToAxleReduction / (m_dWheelDiameter * Math.PI);
 		SmartDashboard.putNumber("Encoder target", pidEncoderTarget);
 		m_DriveDistance.reset();
 		m_leftController1.setSelectedSensorPosition(0, 0, 0);
@@ -317,11 +317,34 @@ public class DriveSubsystem extends Subsystem {
     	
     }
     
+    private class getRightEncoder implements PIDSource {
+
+		@Override
+		public void setPIDSourceType(PIDSourceType pidSource) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public PIDSourceType getPIDSourceType() {
+			// TODO Auto-generated method stub
+			return PIDSourceType.kDisplacement;
+		}
+
+		@Override
+		public double pidGet() {
+			// TODO Auto-generated method stub
+			return m_rightController2.getSelectedSensorPosition(0);
+		}
+    	
+    	
+    }
+    
     private class putDriveDistance implements PIDOutput {
 
 		@Override
 		public void pidWrite(double output) {
-			arcadeDrive(output, m_dSteeringHeading);
+			arcadeDrive(-output, m_dSteeringHeading);
 			// TODO Auto-generated method stub
 			
 		}
