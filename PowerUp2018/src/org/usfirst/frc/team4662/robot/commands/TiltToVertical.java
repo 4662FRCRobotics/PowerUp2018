@@ -21,22 +21,19 @@ public class TiltToVertical extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	System.out.println("Tilt To Vertical Execute");
-    	if ( !Robot.m_grabSubsystem.isTiltVertical()) {
-    		System.out.println("Tilt Is Not Vertical");
+    	/*if ( !Robot.m_grabSubsystem.isTiltVertical()) {
 	    	if ( Robot.m_grabSubsystem.isTiltForward()) {
-	    		System.out.println("tilt Up");
 	    		Robot.m_grabSubsystem.tiltUp();
 	    	} else {
-	    		System.out.println("Tilt Down");
 	    		Robot.m_grabSubsystem.tiltDown();
 	    	}
-    	}
+    	}*/
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.m_grabSubsystem.isTiltVertical();
+       // return Robot.m_grabSubsystem.isTiltVertical();
+    	return true;
     }
 
     // Called once after isFinished returns true

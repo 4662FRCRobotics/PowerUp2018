@@ -72,7 +72,7 @@ public class OI {
 		SmartDashboard.putData("SetTiltVertical", new SetTiltPotVert());
 		
 		if( Robot.m_robotMap.isDashboardTest()) {
-			SmartDashboard.putData("PIDTest", new TurnAnglePID());
+			SmartDashboard.putData("TurnAnglePID", new TurnAnglePID());
 			SmartDashboard.putData("DriveDistancePID", new DriveDistancePID(10));
 			SmartDashboard.putData("MoveLiftToTarge", new MoveLiftToTarget(2000));
 			

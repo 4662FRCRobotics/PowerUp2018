@@ -11,12 +11,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveDistancePID extends Command {
 
 	private double m_dDistance;
+	private double m_dSpeed;
 	private boolean m_bIsDashboard;
 	
     public DriveDistancePID(double distance) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_driveSubsystem);
+    	m_dSpeed = 0;
+    	m_dDistance = distance;
+    	m_bIsDashboard = false;
+    } 
+    
+    public DriveDistancePID(double distance, double speed) {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+    	requires(Robot.m_driveSubsystem);
+    	m_dSpeed = speed;
     	m_dDistance = distance;
     	m_bIsDashboard = false;
     } 
@@ -35,7 +46,11 @@ public class DriveDistancePID extends Command {
     		m_dDistance = Robot.m_driveSubsystem.getDashboardDistance();
     	}
     	Robot.m_driveSubsystem.setKeepHeading();
-    	Robot.m_driveSubsystem.setDriveDistance(m_dDistance);
+    	if(m_dSpeed == 0) {
+    		Robot.m_driveSubsystem.setDriveDistance(m_dDistance);
+    	}else {
+    		Robot.m_driveSubsystem.setDriveDistance(m_dDistance, m_dSpeed);
+    	}
     }
 
     // Called repeatedly when this Command is scheduled to run

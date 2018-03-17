@@ -159,8 +159,11 @@ public class DriveSubsystem extends Subsystem {
     public void disableDriveDistance() {
     	m_DriveDistance.disable();
     }
-    
     public void setDriveDistance(double distance) {
+    	setDriveDistance(distance, m_dDriveDistanceSpeed);
+    }
+    
+    public void setDriveDistance(double distance, double speed) {
     	
 		double pidEncoderTarget = 12 * distance * m_dEncoderPulseCnt * m_dMotorToAxleReduction / (m_dWheelDiameter * Math.PI);
 		SmartDashboard.putNumber("Encoder target", pidEncoderTarget);
@@ -169,10 +172,10 @@ public class DriveSubsystem extends Subsystem {
 		m_rightController2.setSelectedSensorPosition(0, 0, 0);
 		//0 encoders
 		m_DriveDistance.setInputRange(-Math.abs(pidEncoderTarget), Math.abs(pidEncoderTarget));
-		m_DriveDistance.setOutputRange(-m_dDriveDistanceSpeed , m_dDriveDistanceSpeed);
+		m_DriveDistance.setOutputRange(-speed , speed);
 		m_DriveDistance.setPID(m_dDriveDistanceP, m_dDriveDistanceI, m_dDriveDistanceD);
 		m_DriveDistance.setAbsoluteTolerance(m_dDriveDistanceTolerance);
-		m_DriveDistance.setContinuous(true);
+		m_DriveDistance.setContinuous(false);
 		m_DriveDistance.setSetpoint(pidEncoderTarget);
 		m_DriveDistance.enable();
     }
@@ -201,7 +204,7 @@ public class DriveSubsystem extends Subsystem {
     	m_turnAngle.setOutputRange(-throttle, throttle);
     	m_turnAngle.setPID(m_dTurnAngleP, m_dTurnAngleI, m_dTurnAngleD);
     	m_turnAngle.setAbsoluteTolerance(m_dTurnAngleTolerance);
-    	m_turnAngle.setContinuous(true);
+    	m_turnAngle.setContinuous(false);
     	m_turnAngle.setSetpoint(angle);
     	m_turnAngle.enable();
     }

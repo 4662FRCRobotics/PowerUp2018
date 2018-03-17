@@ -34,6 +34,7 @@ public class Autonomous extends CommandGroup {
 	private final String m_strPatternxmlFilename = "/home/lvuser/Autonomous/AutoXMLForFIRSTPowerUp.xml";
 	private String m_strStratPo;
 	private String m_strPattern;
+	private double m_dSpeed;
 	
     public Autonomous() {
         // Add Commands here:
@@ -52,7 +53,7 @@ public class Autonomous extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	
+    	m_dSpeed = .75;
     	try {
     		System.out.println("In Auto Constructor");
     		File patternAndCommandFile = new File(m_strPatternxmlFilename);
@@ -93,7 +94,11 @@ public class Autonomous extends CommandGroup {
 		reader.close();
 		return stringBuilder.toString();
 	}
+    
     public void initialize() {
+    	
+    }
+    public void addCommands() {
     	String gameData = DriverStation.getInstance().getGameSpecificMessage();
     	SmartDashboard.putString("Field Layout", gameData);
     	String strCommand;
@@ -180,6 +185,9 @@ public class Autonomous extends CommandGroup {
     		
     	case "RotateL":
     		addSequential( new TurnAnglePID( -Double.valueOf(commandValue)));
+    		break;
+    	case "Speed":
+    		m_dSpeed = Math.min(1, Double.valueOf(commandValue));
     		break;
     	default:
     		

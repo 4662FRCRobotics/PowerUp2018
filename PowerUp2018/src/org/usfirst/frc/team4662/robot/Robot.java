@@ -27,9 +27,10 @@ public class Robot extends TimedRobot {
 	public static RobotMap m_robotMap;
 	public static DriveSubsystem m_driveSubsystem;
 	public static LiftSubsystem m_liftSubsystem;
-	public static GrabSubsystem m_grabSubsystem;
+	//public static GrabSubsystem m_grabSubsystem;
+	public static GrabSubsystemV2 m_grabSubsystem;
 	public static ClimbSubsystem m_climbSubsystem;
-	public static DriverCam m_driverCam; 
+	//public static DriverCam m_driverCam; 
 	public static Autonomous m_autonomousCommand; 
 	public static OI m_oi;
 
@@ -45,9 +46,10 @@ public class Robot extends TimedRobot {
 		m_robotMap = new RobotMap(strFileName);
 		m_driveSubsystem = new DriveSubsystem();
 		m_liftSubsystem = new LiftSubsystem();
-		m_grabSubsystem = new GrabSubsystem(); 
+		//m_grabSubsystem = new GrabSubsystem(); 
+		m_grabSubsystem = new GrabSubsystemV2(); 
 		m_climbSubsystem = new ClimbSubsystem();
-		m_driverCam = new DriverCam();
+		//m_driverCam = new DriverCam();
 		//m_autonomousCommand = new Autonomous();
 		m_oi = new OI();
 		
@@ -84,7 +86,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_autonomousCommand = new Autonomous();
-		m_autonomousCommand.initialize();
+		m_autonomousCommand.addCommands();
 		m_grabSubsystem.setTiltVertVal();
 		m_liftSubsystem.setEncoderZero();
 

@@ -14,12 +14,14 @@ public class TurnAnglePID extends Command {
 	private boolean m_bIsDashboard;
 	
     public TurnAnglePID(double angle) {
+    	System.out.println("TurnAnglePID(double angle): " + angle);
     	requires(Robot.m_driveSubsystem);
     	m_dAngle = angle;
     	m_bIsDashboard = false;
     }
     
     public TurnAnglePID() {
+    	System.out.println("TurnAnglePID()");
     	requires(Robot.m_driveSubsystem);
     	SmartDashboard.putNumber("TurnAngleTest", 0);
     	m_bIsDashboard = true;
@@ -27,10 +29,13 @@ public class TurnAnglePID extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	System.out.println("TurnAnglePID.initialize()");
     	if ( m_bIsDashboard ) {
     		m_dAngle = Robot.m_driveSubsystem.getDashboardAngle();
     	}
+    	System.out.println("TurnAnglePID.initialize():1 ");
     	Robot.m_driveSubsystem.setTurnAngle(m_dAngle);
+    	System.out.println("TurnAnglePID.initialize():2 ");
     }
 
     // Called repeatedly when this Command is scheduled to run

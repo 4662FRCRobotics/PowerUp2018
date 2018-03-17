@@ -154,6 +154,10 @@ public class RobotMap {
 		return 	getDoubleValue("device", "name", nodeValue, tagname, dDefaultVal);
 		
 	}
+	public int getDeviceIntVal(String nodeValue, String tagname, int iDefaultVal){
+		return 	getIntValue("device", "name", nodeValue, tagname, iDefaultVal);
+		
+	}
 	
 	public int getPortNumber(String nodeValue){
 		return getIntValue("device", "name", nodeValue, "port", -1);

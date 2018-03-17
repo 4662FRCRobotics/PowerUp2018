@@ -10,7 +10,7 @@ public class ToggleDriveCamera extends Command {
     public ToggleDriveCamera() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.m_driverCam);
+    	//requires(Robot.m_driverCam);
     }
 
     // Called just before this Command runs the first time
@@ -19,7 +19,7 @@ public class ToggleDriveCamera extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.m_driverCam.toggleCamera();
+    	//Robot.m_driverCam.toggleCamera();
     }
 
     // Make this return true when this Command no longer needs to run execute()
