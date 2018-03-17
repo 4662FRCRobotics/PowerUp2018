@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
 		m_autonomousCommand.addCommands();
 		m_grabSubsystem.setTiltVertVal();
 		m_liftSubsystem.setEncoderZero();
+		m_driveSubsystem.setDriveAuto();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -119,6 +120,7 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+		m_driveSubsystem.setDriveTeleop();
 	}
 
 	/**

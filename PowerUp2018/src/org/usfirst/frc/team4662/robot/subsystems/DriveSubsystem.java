@@ -129,6 +129,14 @@ public class DriveSubsystem extends Subsystem {
     	SmartDashboard.putNumber("rightencoder", m_rightController2.getSelectedSensorPosition(0));
     }
     
+    public void setDriveAuto() {
+    	m_robotDrive.setSafetyEnabled(false);
+    }
+    
+    public void setDriveTeleop() {
+    	m_robotDrive.setSafetyEnabled(true); 	
+    }
+    
     //get gyroscope angle 
     private double getGyroAngle() {
     	return m_AHRSnavX.getAngle();

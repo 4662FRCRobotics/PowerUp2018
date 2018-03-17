@@ -41,8 +41,8 @@ public class GrabSubsystemV2 extends Subsystem {
 	private double m_dTiltCurrentSpeed;
 	private double m_dTiltPreviousSpeed;
 	private int m_iTiltRefPosition;
-	private int m_iTiltEncoderDirection;
 	private boolean m_bSafetyEnable;
+	private double m_dTiltMotorDirection;
 	//private boolean m_bPrevTiltEncoder;
 	
 	public GrabSubsystemV2() {
@@ -62,18 +62,20 @@ public class GrabSubsystemV2 extends Subsystem {
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 0.7; 
 		m_dReleaseSpeed = 1.0;
-		m_dTiltMoveSpeed = 0.8;
+		m_dTiltMoveSpeed = 1.0;
 		m_dTiltCurrentSpeed = 0;
-		m_iTiltVertVal = Robot.m_robotMap.getDeviceIntVal("TiltPot", "VertVal", 88);
+		//m_iTiltVertVal = Robot.m_robotMap.getDeviceIntVal("TiltPot", "VertVal", 88);
 		m_iTiltFwdLiftLim = 3;
 		m_iTiltRevLiftLim = 3;
 		m_iTiltFwdLim = 75;
 		m_iTiltRevLim = 40;
-		m_cntTiltEncoder = new Counter(Robot.m_robotMap.getPortNumber("TiltEncoder"));
+		m_cntTiltEncoder = new Counter();
+		m_cntTiltEncoder.setUpSource(Robot.m_robotMap.getPortNumber("TiltEncoder"));
+		m_cntTiltEncoder.setUpSourceEdge(true,false);
 		m_bSafetyEnable = true;
 		m_dTiltPreviousSpeed = 0;
 		m_iTiltRefPosition = 0;
-		m_iTiltEncoderDirection = 1;
+		m_dTiltMotorDirection = -1;
 		
 	}
 	
@@ -97,7 +99,7 @@ public class GrabSubsystemV2 extends Subsystem {
     		//SmartDashboard.putBoolean("Grab Limit Forward", m_grabController.getSensorCollection().isFwdLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Forward", m_tiltController.getSensorCollection().isFwdLimitSwitchClosed());
         	SmartDashboard.putBoolean("Tilt Limit Reverse", m_tiltController.getSensorCollection().isRevLimitSwitchClosed());
-        	SmartDashboard.putNumber("Tilt Encoder", getTiltEncoder());
+        	SmartDashboard.putNumber("Tilt Encoder", getTiltEncoder(m_dTiltCurrentSpeed));
         	SmartDashboard.putNumber("Raw Tilt Encoder", m_cntTiltEncoder.get());
         	SmartDashboard.putNumber("Tilt Current Speed", m_dTiltCurrentSpeed);
         	SmartDashboard.putBoolean("Is Tilt At Bottom", isTiltAtBottom());
@@ -122,22 +124,34 @@ public class GrabSubsystemV2 extends Subsystem {
         
     	}
      	checkTiltDirectionChange();
-    	m_tiltController.set(m_dTiltCurrentSpeed);
+    	m_tiltController.set(m_dTiltCurrentSpeed *m_dTiltMotorDirection );
     	displayLimitSwitches();
     }
     
     private void checkTiltDirectionChange() {
-    	if (( m_dTiltCurrentSpeed >= 0 && m_dTiltPreviousSpeed < 0)
-    		|| (m_dTiltCurrentSpeed < 0 && m_dTiltPreviousSpeed >= 0)) {
-    			m_dTiltPreviousSpeed = m_dTiltCurrentSpeed;
-    			m_iTiltRefPosition = m_cntTiltEncoder.get();
-    			m_iTiltEncoderDirection *= -1;
-    			m_cntTiltEncoder.reset();
-    		}
+    	double dDeadbandRange = 0.04;
+    	
+    	if (Math.abs(m_dTiltCurrentSpeed) < dDeadbandRange) {
+    		m_dTiltCurrentSpeed = 0;
+    		m_iTiltRefPosition = getTiltEncoder(m_dTiltPreviousSpeed);
+			m_cntTiltEncoder.reset();
+    	} 
+    	if (( m_dTiltCurrentSpeed >= 0 && m_dTiltPreviousSpeed < 0) || (m_dTiltCurrentSpeed < 0 && m_dTiltPreviousSpeed >= 0)
+    			) {
+			m_iTiltRefPosition = getTiltEncoder(m_dTiltPreviousSpeed);
+			m_cntTiltEncoder.reset();
+			m_dTiltPreviousSpeed = m_dTiltCurrentSpeed;
+    	}
     }
     
-    private int getTiltEncoder() {
-    	return m_iTiltRefPosition + (m_iTiltEncoderDirection * m_cntTiltEncoder.get());
+    private int getTiltEncoder(double dSpeed) {
+    	int iReturnValue = 0;
+    	if (m_dTiltPreviousSpeed >= 0) {
+    		iReturnValue = m_iTiltRefPosition +  m_cntTiltEncoder.get();
+    	} else {
+    		iReturnValue = m_iTiltRefPosition -  m_cntTiltEncoder.get();
+    	}
+    	return iReturnValue;
     }
     
     public void tiltUp() {
@@ -153,6 +167,8 @@ public class GrabSubsystemV2 extends Subsystem {
     }
     
     public void setTiltVertVal() {
+    	m_iTiltRefPosition = 0;
+		m_cntTiltEncoder.reset();
     	/*m_dTiltVertVal = m_tiltPot.get();
     	m_tiltController.setSelectedSensorPosition(0, 0, 0);*/
     }
