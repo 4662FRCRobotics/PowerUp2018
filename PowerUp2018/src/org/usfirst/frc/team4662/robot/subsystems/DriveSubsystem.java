@@ -167,6 +167,11 @@ public class DriveSubsystem extends Subsystem {
     public void disableDriveDistance() {
     	m_DriveDistance.disable();
     }
+    
+    public double getDriveDistanceSpeed() {
+    	return m_dDriveDistanceSpeed;
+    }
+    
     public void setDriveDistance(double distance) {
     	setDriveDistance(distance, m_dDriveDistanceSpeed);
     }

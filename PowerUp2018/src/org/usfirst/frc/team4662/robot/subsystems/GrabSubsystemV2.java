@@ -71,6 +71,7 @@ public class GrabSubsystemV2 extends Subsystem {
 		m_iTiltRevLim = 40;
 		m_cntTiltEncoder = new Counter();
 		m_cntTiltEncoder.setUpSource(Robot.m_robotMap.getPortNumber("TiltEncoder"));
+		//m_cntTiltEncoder.setUpDownCounterMode();
 		m_cntTiltEncoder.setUpSourceEdge(true,false);
 		m_bSafetyEnable = true;
 		m_dTiltPreviousSpeed = 0;
@@ -116,6 +117,19 @@ public class GrabSubsystemV2 extends Subsystem {
    
     public void setTiltSpeed(double speed) {
     	m_dTiltCurrentSpeed = speed;
+    	double dDeadbandRange = 0.04;
+    	
+    	if (Math.abs(m_dTiltCurrentSpeed) < dDeadbandRange) {
+    		m_dTiltCurrentSpeed = 0;
+    		//m_iTiltRefPosition = getTiltEncoder(m_dTiltPreviousSpeed);
+			//m_cntTiltEncoder.reset();
+    	} else {
+    		if (m_dTiltCurrentSpeed > 0) {
+    			m_dTiltCurrentSpeed = 1;
+    		} else {
+    			m_dTiltCurrentSpeed = -1;
+    		}
+    	}
     	if(m_bSafetyEnable) {
     		if ( (isTiltAtBottom() && speed < 0) || (isTiltAtTop() && speed > 0) ) 
         	{
@@ -124,19 +138,13 @@ public class GrabSubsystemV2 extends Subsystem {
         
     	}
      	checkTiltDirectionChange();
-    	m_tiltController.set(m_dTiltCurrentSpeed *m_dTiltMotorDirection );
+    	m_tiltController.set(m_dTiltCurrentSpeed * m_dTiltMotorDirection );
     	displayLimitSwitches();
     }
     
     private void checkTiltDirectionChange() {
-    	double dDeadbandRange = 0.04;
     	
-    	if (Math.abs(m_dTiltCurrentSpeed) < dDeadbandRange) {
-    		m_dTiltCurrentSpeed = 0;
-    		m_iTiltRefPosition = getTiltEncoder(m_dTiltPreviousSpeed);
-			m_cntTiltEncoder.reset();
-    	} 
-    	if (( m_dTiltCurrentSpeed >= 0 && m_dTiltPreviousSpeed < 0) || (m_dTiltCurrentSpeed < 0 && m_dTiltPreviousSpeed >= 0)
+    	if (( m_dTiltCurrentSpeed <= 0 && m_dTiltPreviousSpeed > 0) || (m_dTiltCurrentSpeed > 0 && m_dTiltPreviousSpeed <= 0) || (m_dTiltCurrentSpeed == 0 && m_dTiltPreviousSpeed < 0)
     			) {
 			m_iTiltRefPosition = getTiltEncoder(m_dTiltPreviousSpeed);
 			m_cntTiltEncoder.reset();
@@ -146,7 +154,7 @@ public class GrabSubsystemV2 extends Subsystem {
     
     private int getTiltEncoder(double dSpeed) {
     	int iReturnValue = 0;
-    	if (m_dTiltPreviousSpeed >= 0) {
+    	if (m_dTiltPreviousSpeed <= 0) {
     		iReturnValue = m_iTiltRefPosition +  m_cntTiltEncoder.get();
     	} else {
     		iReturnValue = m_iTiltRefPosition -  m_cntTiltEncoder.get();

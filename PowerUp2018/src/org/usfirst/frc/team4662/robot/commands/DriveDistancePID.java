@@ -13,6 +13,7 @@ public class DriveDistancePID extends Command {
 	private double m_dDistance;
 	private double m_dSpeed;
 	private boolean m_bIsDashboard;
+	private final double kdFeetPerSecond = 10;
 	
     public DriveDistancePID(double distance) {
         // Use requires() here to declare subsystem dependencies
@@ -45,10 +46,13 @@ public class DriveDistancePID extends Command {
     	if ( m_bIsDashboard ) {
     		m_dDistance = Robot.m_driveSubsystem.getDashboardDistance();
     	}
+    	
     	Robot.m_driveSubsystem.setKeepHeading();
     	if(m_dSpeed == 0) {
+    		setTimeout(1 + (m_dDistance / (kdFeetPerSecond * Robot.m_driveSubsystem.getDriveDistanceSpeed())));
     		Robot.m_driveSubsystem.setDriveDistance(m_dDistance);
     	}else {
+    		setTimeout(1 + (m_dDistance / (kdFeetPerSecond * m_dSpeed)));
     		Robot.m_driveSubsystem.setDriveDistance(m_dDistance, m_dSpeed);
     	}
     }
@@ -59,7 +63,7 @@ public class DriveDistancePID extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.m_driveSubsystem.driveDistanceOnTarget();
+        return Robot.m_driveSubsystem.driveDistanceOnTarget() || isTimedOut();
     }
 
     // Called once after isFinished returns true
