@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *,
  */
-public class GrabSubsystem extends Subsystem {
+public class GrabClawSubsystem extends Subsystem {
 
     // Put methods for controlling this subsystem
     // here. Call these from , Commands.
@@ -43,7 +43,7 @@ public class GrabSubsystem extends Subsystem {
 	private double m_dTiltRevLim;
 	private boolean m_bSafetyEnable;
 	
-	public GrabSubsystem() {
+	public GrabClawSubsystem() {
 		m_grabController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabController"));
 		//m_grabController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		//m_grabController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 0);

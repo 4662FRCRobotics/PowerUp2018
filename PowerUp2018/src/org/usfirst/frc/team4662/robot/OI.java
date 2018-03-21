@@ -60,7 +60,9 @@ public class OI {
 		m_grabClose = new JoystickButton(m_operatorPad, 1);
 		m_grabClose.whileHeld(new GrabClose());
 		m_grabOpen = new JoystickButton(m_operatorPad, 3);
-		m_grabOpen.whileHeld(new GrabOpen());
+		//If changing commands, also change the GrabSubsystem in Robot.java
+		//m_grabOpen.whileHeld(new GrabClawOpen());
+		m_grabOpen.whileHeld(new GrabWheelOpen());
 		m_putPCubeDown = new JoystickButton(m_operatorPad, 2);
 		m_putPCubeDown.whenPressed(new PutPCubeDown());
 		m_enableSafety = new JoystickButton(m_operatorPad, 9);

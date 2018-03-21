@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *,
  */
-public class GrabSubsystemV2 extends Subsystem {
+public class GrabWheelSubsystem extends Subsystem {
 
     // Put methods for controlling this subsystem
     // here. Call these from , Commands.
@@ -45,19 +45,19 @@ public class GrabSubsystemV2 extends Subsystem {
 	private double m_dTiltMotorDirection;
 	//private boolean m_bPrevTiltEncoder;
 	
-	public GrabSubsystemV2() {
+	public GrabWheelSubsystem() {
 		m_grabControllerLeft = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabControllerLeft"));
-		//m_grabControllerRight = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabControllerRight"));
+		m_grabControllerRight = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("GrabControllerRight"));
 		m_grabControllerLeft.setInverted(true);
-		//m_grabControllerRight.setInverted(false);
-		//m_grabController = new SpeedControllerGroup(m_grabControllerLeft, m_grabControllerRight);
-		m_grabController = new SpeedControllerGroup(m_grabControllerLeft);
+		m_grabControllerRight.setInverted(false);
+		m_grabController = new SpeedControllerGroup(m_grabControllerLeft, m_grabControllerRight);
+		//m_grabController = new SpeedControllerGroup(m_grabControllerLeft);
 		//m_grabController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		//m_grabController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed, 0);
 		
 		m_tiltController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("TiltController"));
-		//m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-		//m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
+		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_tiltController.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 0.7; 
@@ -196,7 +196,7 @@ public class GrabSubsystemV2 extends Subsystem {
     	//if ( m_tiltPot.get() >= (m_dTiltVertVal + m_dTiltRevLim)) {
     		//bReturnVal = true;
     	//} else {
-    		bReturnVal = m_tiltController.getSensorCollection().isFwdLimitSwitchClosed();
+    		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
     	//}
     	return bReturnVal;
     }
@@ -206,11 +206,10 @@ public class GrabSubsystemV2 extends Subsystem {
     }
     
     public boolean isTiltNearLift() {
-    	boolean bReturnVal = false;
+    	return m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
     	//if ( m_tiltPot.get() >= (m_dTiltVertVal - m_dTiltFwdLiftLim)) {
     		//bReturnVal = true;
     	//}
-    	return bReturnVal;
     }
     
    /* public boolean isTiltForward() {
@@ -227,13 +226,17 @@ public class GrabSubsystemV2 extends Subsystem {
     }
     
     public void grabOpen() {
-    	//m_grabController.set(1);
-        m_grabController.set(m_dReleaseSpeed);
+        grabOpen(m_dReleaseSpeed);
+    }
+    
+    public void grabOpen(double dSpeed) {
+        m_grabController.set(dSpeed);
     	displayLimitSwitches();
     }
     public void grabStop() {
     	m_grabController.set(0.0);
     }
+    
     public boolean isGrabClosed() {
     	return false; 	
     }
