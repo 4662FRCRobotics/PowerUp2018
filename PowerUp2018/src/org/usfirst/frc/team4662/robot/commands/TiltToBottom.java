@@ -10,22 +10,25 @@ import edu.wpi.first.wpilibj.command.Command;
 public class TiltToBottom extends Command {
 
 	private boolean m_bIsTimeOut;
+	private double m_dTimeOut;
 	
     public TiltToBottom() {
       
     	requires(Robot.m_grabSubsystem);
     	m_bIsTimeOut = false;
+    	m_dTimeOut = 0.75;
     }
     
     public TiltToBottom(double timeOut) {
         
     	requires(Robot.m_grabSubsystem);
     	m_bIsTimeOut = true;
-    	setTimeout(timeOut);
+    	m_dTimeOut = timeOut;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	setTimeout(m_dTimeOut);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -35,13 +38,7 @@ public class TiltToBottom extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	boolean bReturnValue = false;
-    	if ( m_bIsTimeOut) {
-    		bReturnValue = isTimedOut();
-    	} else {
-    		bReturnValue = Robot.m_grabSubsystem.isTiltAtBottom();
-    	}
-        return bReturnValue;
+        return isTimedOut() || Robot.m_grabSubsystem.isTiltAtBottom();
     }
 
     // Called once after isFinished returns true

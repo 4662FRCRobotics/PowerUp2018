@@ -61,7 +61,7 @@ public class GrabWheelSubsystem extends Subsystem {
 		m_tiltController.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 0.7; 
-		m_dReleaseSpeed = 1.0;
+		m_dReleaseSpeed = 0.3;
 		m_dTiltMoveSpeed = 1.0;
 		m_dTiltCurrentSpeed = 0;
 		//m_iTiltVertVal = Robot.m_robotMap.getDeviceIntVal("TiltPot", "VertVal", 88);
@@ -186,7 +186,7 @@ public class GrabWheelSubsystem extends Subsystem {
     	//if ( m_tiltPot.get() <= (m_dTiltVertVal - m_dTiltFwdLim)) {
     	//	bReturnVal = true;
     	//} else {
-    		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
+    		bReturnVal = m_tiltController.getSensorCollection().isFwdLimitSwitchClosed();
     	//}
     	return bReturnVal;
     }
@@ -197,6 +197,9 @@ public class GrabWheelSubsystem extends Subsystem {
     		//bReturnVal = true;
     	//} else {
     		bReturnVal = m_tiltController.getSensorCollection().isRevLimitSwitchClosed();
+    		if (bReturnVal) {
+    			setTiltVertVal();
+    		}
     	//}
     	return bReturnVal;
     }
