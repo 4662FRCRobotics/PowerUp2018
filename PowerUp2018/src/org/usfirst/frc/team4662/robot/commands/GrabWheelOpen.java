@@ -17,7 +17,7 @@ public class GrabWheelOpen extends Command {
         // eg. requires(chassis);
     	requires(Robot.m_grabSubsystem);
     	setInterruptible(true);
-    	m_dSlowGrabSpeed = .3;
+    	m_dSlowGrabSpeed = .6;
     	m_dFastGrabSpeed = 1;
     	SmartDashboard.putNumber("SlowGrabSpeed",m_dSlowGrabSpeed);
     	SmartDashboard.putNumber("FastGrabSpeed",m_dFastGrabSpeed);
@@ -41,7 +41,7 @@ public class GrabWheelOpen extends Command {
     	} else {
     		dReturnValue = m_dFastGrabSpeed;
     	}
-    	return dReturnValue;
+    	return 1;
     }
 
     // Make this return true when this Command no longer needs to run execute()

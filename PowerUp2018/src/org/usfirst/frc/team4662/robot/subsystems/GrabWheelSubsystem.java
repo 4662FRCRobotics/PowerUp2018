@@ -60,7 +60,7 @@ public class GrabWheelSubsystem extends Subsystem {
 		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_tiltController.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
-		m_dGrabSpeed = 0.7; 
+		m_dGrabSpeed = 1.0; 
 		m_dReleaseSpeed = 0.3;
 		m_dTiltMoveSpeed = 1.0;
 		m_dTiltCurrentSpeed = 0;
@@ -224,7 +224,7 @@ public class GrabWheelSubsystem extends Subsystem {
     } */
     
     public void grabClose() {
-    	m_grabController.set(-m_dGrabSpeed);
+    	m_grabController.set(m_dGrabSpeed);
     	displayLimitSwitches();
     }
     
@@ -233,7 +233,7 @@ public class GrabWheelSubsystem extends Subsystem {
     }
     
     public void grabOpen(double dSpeed) {
-        m_grabController.set(dSpeed);
+        m_grabController.set(-dSpeed);
     	displayLimitSwitches();
     }
     public void grabStop() {

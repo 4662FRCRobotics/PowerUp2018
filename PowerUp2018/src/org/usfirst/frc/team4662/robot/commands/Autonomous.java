@@ -166,7 +166,7 @@ public class Autonomous extends CommandGroup {
     private void addCommand(String command, String commandValue) {
     	switch (command) {
     	case "Forward":
-    		addSequential( new DriveDistancePID( Double.valueOf(commandValue)));
+    		addSequential( new DriveDistancePID( Double.valueOf(commandValue), m_dSpeed));
     		break;
     	case "RotateR":
     		addSequential( new TurnAnglePID( Double.valueOf(commandValue)));

@@ -57,6 +57,7 @@ public class LiftSubsystem extends Subsystem {
 		m_dLiftPIDTolerance = Robot.m_robotMap.getPIDToleranceVal("Lift", 100);
 		m_dLiftPIDSpeed = 1;
 		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		m_leftLiftController1.setSensorPhase(true);
 		m_liftPID = new PIDController(0.2, 0.0, 0.0, new getLiftEncoder(), new putLiftSpeed()); 
 	}
     
