@@ -58,10 +58,9 @@ public class GrabWheelSubsystem extends Subsystem {
 		m_tiltController = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("TiltController"));
 		m_tiltController.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_tiltController.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-		m_tiltController.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		m_tiltController.setNeutralMode(NeutralMode.Brake);
 		m_dGrabSpeed = 1.0; 
-		m_dReleaseSpeed = 0.3;
+		m_dReleaseSpeed = 1.0;
 		m_dTiltMoveSpeed = 1.0;
 		m_dTiltCurrentSpeed = 0;
 		//m_iTiltVertVal = Robot.m_robotMap.getDeviceIntVal("TiltPot", "VertVal", 88);
@@ -109,8 +108,6 @@ public class GrabWheelSubsystem extends Subsystem {
         	SmartDashboard.putBoolean("Is Grab Closed", isGrabClosed());
         	SmartDashboard.putBoolean("Is Grab Open", isGrabOpen());
         	SmartDashboard.putBoolean("Is Grab Max", isGrabMax());
-        	SmartDashboard.putBoolean("Is Tilt Vertical", isTiltVertical());
-        	SmartDashboard.putNumber("Tilt Speed", m_dTiltCurrentSpeed);
         	
     	}
     }

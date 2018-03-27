@@ -182,12 +182,20 @@ public class Autonomous extends CommandGroup {
     	case "MoveLiftToTarget":
     		addSequential( new MoveLiftToTarget(Double.valueOf(commandValue)));
     		break;
-    		
+    	case "TiltToBottom":
+    		addSequential( new TiltToBottom(Double.valueOf(commandValue)));
+    		break;
+    	case "GrabOpenTimed":
+    		addSequential( new GrabOpenTimed(Double.valueOf(commandValue)));
+    		break;
     	case "RotateL":
     		addSequential( new TurnAnglePID( -Double.valueOf(commandValue)));
     		break;
     	case "Speed":
     		m_dSpeed = Math.min(1, Double.valueOf(commandValue));
+    		break;
+    	case "TiltToVertical" :
+    		addSequential( new TiltToVertical(2));
     		break;
     	default:
     		

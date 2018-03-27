@@ -13,7 +13,7 @@ public class DriveDistancePID extends Command {
 	private double m_dDistance;
 	private double m_dSpeed;
 	private boolean m_bIsDashboard;
-	private final double kdFeetPerSecond = 10;
+	private final double kdFeetPerSecond = Robot.m_robotMap.getDeviceDoubleVal("Drive", "maxvelocity", 10);
 	
     public DriveDistancePID(double distance) {
         // Use requires() here to declare subsystem dependencies
@@ -49,10 +49,10 @@ public class DriveDistancePID extends Command {
     	
     	Robot.m_driveSubsystem.setKeepHeading();
     	if(m_dSpeed == 0) {
-    		setTimeout(1 + (m_dDistance / (kdFeetPerSecond * Robot.m_driveSubsystem.getDriveDistanceSpeed())));
+    		setTimeout(1 + Math.abs((m_dDistance / (kdFeetPerSecond * Robot.m_driveSubsystem.getDriveDistanceSpeed()))));
     		Robot.m_driveSubsystem.setDriveDistance(m_dDistance);
     	}else {
-    		setTimeout(1 + (m_dDistance / (kdFeetPerSecond * m_dSpeed)));
+    		setTimeout(1 + Math.abs((m_dDistance / (kdFeetPerSecond * m_dSpeed))));
     		Robot.m_driveSubsystem.setDriveDistance(m_dDistance, m_dSpeed);
     	}
     }

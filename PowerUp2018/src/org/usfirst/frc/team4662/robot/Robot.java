@@ -30,7 +30,10 @@ public class Robot extends TimedRobot {
 	//public static GrabClawSubsystem m_grabSubsystem;
 	public static GrabWheelSubsystem m_grabSubsystem;
 	public static ClimbSubsystem m_climbSubsystem;
-	//public static DriverCam m_driverCam; 
+	//2 Camera
+	//public static DriverCam m_driverCam;
+	//1 Camera
+	//public static DriverCam1 m_driverCam;
 	public static Autonomous m_autonomousCommand; 
 	public static OI m_oi;
 
@@ -51,11 +54,11 @@ public class Robot extends TimedRobot {
 		m_grabSubsystem = new GrabWheelSubsystem(); 
 		m_climbSubsystem = new ClimbSubsystem();
 		//m_driverCam = new DriverCam();
-		//m_autonomousCommand = new Autonomous();
+		//m_driverCam = new DriverCam1();
 		m_oi = new OI();
 		
 		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", m_chooser);
+		//SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
 	/**
