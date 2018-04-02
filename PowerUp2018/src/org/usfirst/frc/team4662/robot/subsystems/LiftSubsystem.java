@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LiftSubsystem extends Subsystem {
 
 	private WPI_TalonSRX m_leftLiftController1;
-	//private WPI_TalonSRX m_rightLiftController1;
+	private WPI_TalonSRX m_rightLiftController1;
 	private SpeedControllerGroup m_liftControlGroup;
 	private double kdLiftUpSpeed;
 	private double kdLiftDownSpeed;
@@ -43,11 +43,11 @@ public class LiftSubsystem extends Subsystem {
 		m_leftLiftController1.setNeutralMode(NeutralMode.Brake);
 		m_leftLiftController1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_leftLiftController1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
-		//m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
-		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1);
+		m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
+		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1, m_rightLiftController1);
 		kdLiftUpSpeed = 1.0;
 		kdLiftDownSpeed = 0.6;
-		kdLiftTop = 9000.0;
+		kdLiftTop = 9000000.0;
 		kdLiftBottom = -2500;	
 		kdSpeedHold = 0.1;
 		m_dLiftSpeed = 0.0;
@@ -56,7 +56,7 @@ public class LiftSubsystem extends Subsystem {
 		m_dLiftPIDD = Robot.m_robotMap.getPIDDVal("Lift", 0.0);
 		m_dLiftPIDTolerance = Robot.m_robotMap.getPIDToleranceVal("Lift", 100);
 		m_dLiftPIDSpeed = 1;
-		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		m_leftLiftController1.setSensorPhase(true);
 		m_liftPID = new PIDController(0.2, 0.0, 0.0, new getLiftEncoder(), new putLiftSpeed()); 
 	}
@@ -123,11 +123,11 @@ public class LiftSubsystem extends Subsystem {
     	return bReturnVal;
     }
     
-    public void enableLiftPID( double target) {
-    	m_liftPID.reset();
+    public void enableLiftPID(double target) {
+    	//m_liftPID.reset();
     	m_liftPID.setInputRange(-Math.abs(1.1 * kdLiftTop), Math.abs(1.1 * kdLiftTop));
     	m_liftPID.setOutputRange(-Math.abs(m_dLiftPIDSpeed), Math.abs(m_dLiftPIDSpeed));
-    	m_liftPID.setContinuous(true);
+    	m_liftPID.setContinuous(false);
     	m_liftPID.setSetpoint(target);
     	m_liftPID.setAbsoluteTolerance(m_dLiftPIDTolerance);
     	m_liftPID.enable();
