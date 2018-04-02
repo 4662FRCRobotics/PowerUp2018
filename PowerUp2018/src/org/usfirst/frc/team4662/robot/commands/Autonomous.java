@@ -55,8 +55,9 @@ public class Autonomous extends CommandGroup {
         // arm.
     	m_dSpeed = .75;
     	try {
-    		System.out.println("In Auto Constructor");
+    		System.out.println("In Auto Constructorxxx: m_strPatternxmlFilename" + m_strPatternxmlFilename);
     		File patternAndCommandFile = new File(m_strPatternxmlFilename);
+    		System.out.println("In Auto Constructorxxx: patternAndCommandFile" + patternAndCommandFile);
     		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     		DocumentBuilder dBuilder;
     		
@@ -64,7 +65,7 @@ public class Autonomous extends CommandGroup {
     		
     		m_patternAndCommandDoc = dBuilder.parse(patternAndCommandFile);
     		m_patternAndCommandDoc.getDocumentElement().normalize();
-    		System.out.println("In Auto Constructor" + m_patternAndCommandDoc);
+    		System.out.println("In Auto Constructor: pattern=" + m_patternAndCommandDoc);
     		m_xPath = XPathFactory.newInstance().newXPath();
     		
     	} catch (Exception e){
@@ -110,9 +111,9 @@ public class Autonomous extends CommandGroup {
 			
 	    	String searchExpr = "//stratpo[@name=\"" + m_strStratPo + "\"]//Pattern[@fieldlayout=\"" + gameData.substring(0, 2)  + "\"]/text()";
 	    	SmartDashboard.putString("searchexpr", searchExpr);
-	    	System.out.println(searchExpr);
-			System.out.println(m_patternAndCommandDoc);
-			System.out.println(m_xPath);
+	    	System.out.println("addCommands:" + searchExpr);
+			System.out.println("addCommands:" + m_patternAndCommandDoc);
+			System.out.println("addCommands:" + m_xPath);
 			NodeList nodeList = (NodeList) m_xPath.compile(searchExpr).evaluate(m_patternAndCommandDoc, XPathConstants.NODESET);
 			
 			if (nodeList.getLength()==1) {
@@ -180,7 +181,8 @@ public class Autonomous extends CommandGroup {
     		addSequential( new PutPCubeDown());
     		break;
     	case "MoveLiftToTarget":
-    		addSequential( new MoveLiftToTarget(Double.valueOf(commandValue)));
+    		addParallel( new MoveLiftToTarget(Double.valueOf(commandValue)));
+    		addParallel(new TiltToVertical(2));
     		break;
     	case "TiltToBottom":
     		addSequential( new TiltToBottom(Double.valueOf(commandValue)));
@@ -196,6 +198,13 @@ public class Autonomous extends CommandGroup {
     		break;
     	case "TiltToVertical" :
     		addSequential( new TiltToVertical(2));
+    		break;
+		case "TurnLeftTimed" :
+    		addSequential( new TurnLeftTimed(Double.valueOf(commandValue)));
+    		break;
+    	case "TurnRightTimed" :
+    		System.out.println("InTurnRightTimed");
+    		addSequential( new TurnRightTimed(Double.valueOf(commandValue)));
     		break;
     	default:
     		

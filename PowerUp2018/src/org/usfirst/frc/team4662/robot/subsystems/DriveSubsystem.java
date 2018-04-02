@@ -7,6 +7,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.ADXL362;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -41,7 +43,8 @@ public class DriveSubsystem extends Subsystem {
 	private double m_dWheelDiameter;
 	private double m_dEncoderPulseCnt;
 	//declare for turn to angle
-	private AHRS m_AHRSnavX;
+	//private AHRS m_AHRSnavX;
+	private ADXRS450_Gyro m_AHRSnavX;
 	private PIDController m_turnAngle;
 	private double m_dTurnAngleP;
 	private double m_dTurnAngleI;
@@ -92,7 +95,8 @@ public class DriveSubsystem extends Subsystem {
 		m_dDistance = getDashboardDistance();
 		
 		//instantiation for turn to angle
-		m_AHRSnavX = new AHRS(SPI.Port.kMXP);
+		//m_AHRSnavX = new AHRS(SPI.Port.kMXP);
+		m_AHRSnavX = new ADXRS450_Gyro();
 		m_dTurnAngleP = Robot.m_robotMap.getPIDPVal("TurnAngle", 0.2);
 		m_dTurnAngleI = Robot.m_robotMap.getPIDIVal("TurnAngle", 0.4);
 		m_dTurnAngleD = Robot.m_robotMap.getPIDDVal("TurnAngle", 0.4);
@@ -212,7 +216,8 @@ public class DriveSubsystem extends Subsystem {
     }
     public void setTurnAngle(double angle, double throttle) {
     	m_turnAngle.reset();
-    	m_AHRSnavX.zeroYaw();
+    	m_AHRSnavX.reset();
+    	//m_AHRSnavX.zeroYaw();
     	m_turnAngle.setInputRange(-180.0f, 180.0f);
     	m_turnAngle.setOutputRange(-throttle, throttle);
     	m_turnAngle.setPID(m_dTurnAngleP, m_dTurnAngleI, m_dTurnAngleD);
@@ -260,15 +265,28 @@ public class DriveSubsystem extends Subsystem {
     
     //sets values and enables keep heading pid
     public void setKeepHeading() {
-    	m_keepHeading.reset();
-    	m_AHRSnavX.zeroYaw();
-    	m_keepHeading.setInputRange(-180.0f, 180.0f);
-    	m_keepHeading.setOutputRange(-.75, .75);
-    	m_keepHeading.setPID(m_dkeepHeadingP, m_dkeepHeadingI, m_dkeepHeadingD);
-    	m_keepHeading.setAbsoluteTolerance(m_dkeepHeadingTolerance);
-    	m_keepHeading.setContinuous(true);
-    	m_keepHeading.setSetpoint(0.0);
-    	m_keepHeading.enable();
+    	if (m_AHRSnavX != null) {
+    		System.out.println("In SetKeepHeading; 1: m_AHRSnavX = " + m_AHRSnavX);
+    		m_keepHeading.reset();
+    		System.out.println("In SetKeepHeading; 2");
+    		m_AHRSnavX.reset();
+    		System.out.println("In SetKeepHeading; 3");
+    		//m_AHRSnavX.zeroYaw();
+    		m_keepHeading.setInputRange(-180.0f, 180.0f);
+    		System.out.println("In SetKeepHeading; 4");
+    		m_keepHeading.setOutputRange(-.75, .75);
+    		System.out.println("In SetKeepHeading; 5");
+    		m_keepHeading.setPID(m_dkeepHeadingP, m_dkeepHeadingI, m_dkeepHeadingD);
+    		System.out.println("In SetKeepHeading; 6");
+    		m_keepHeading.setAbsoluteTolerance(m_dkeepHeadingTolerance);
+    		System.out.println("In SetKeepHeading; 7");
+    		m_keepHeading.setContinuous(true);
+    		System.out.println("In SetKeepHeading; 8");
+    		m_keepHeading.setSetpoint(0.0);
+    		System.out.println("In SetKeepHeading; 9");
+    		m_keepHeading.enable();
+    		System.out.println("In SetKeepHeading; 10");
+    	}
     }
     //defines the pidsource for the gyro turn
     private class getSourceAngle implements PIDSource {

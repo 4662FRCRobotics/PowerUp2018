@@ -7,30 +7,31 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class KeepHeadingPID extends Command {
-
-    public KeepHeadingPID() {
+public class TurnLeftTimed extends Command {
+	
+	double m_dTimeout;
+	
+    public TurnLeftTimed(double dTimeout) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.m_driveSubsystem);
+    	
+    	m_dTimeout = dTimeout;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	System.out.println("In KeepHeadingPid; initialize");
-    	Robot.m_driveSubsystem.setKeepHeading();
-    	System.out.println("In KeepHeadingPid; end of initialize");
+    	setTimeout(m_dTimeout);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double throttle = 2 / (Robot.m_oi.m_driveStick.getThrottle() + 3.0);
-    	Robot.m_driveSubsystem.driveKeepHeading(Robot.m_oi.m_driveStick.getY() * throttle);
+    	Robot.m_driveSubsystem.arcadeDrive(0, -0.75);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return isTimedOut();
     }
 
     // Called once after isFinished returns true
