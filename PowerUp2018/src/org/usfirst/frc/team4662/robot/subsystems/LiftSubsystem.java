@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -45,19 +46,21 @@ public class LiftSubsystem extends Subsystem {
 		m_leftLiftController1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
 		m_rightLiftController1 = new WPI_TalonSRX(Robot.m_robotMap.getPortNumber("rightLift1"));
 		m_liftControlGroup = new SpeedControllerGroup(m_leftLiftController1, m_rightLiftController1);
+		m_rightLiftController1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, m_leftLiftController1.getDeviceID(), 0);
+		m_rightLiftController1.setNeutralMode(NeutralMode.Brake);
 		kdLiftUpSpeed = 1.0;
 		kdLiftDownSpeed = 0.6;
 		kdLiftTop = 9000000.0;
 		kdLiftBottom = -2500;	
-		kdSpeedHold = 0.1;
+		kdSpeedHold = 0.01;
 		m_dLiftSpeed = 0.0;
 		m_dLiftPIDP = Robot.m_robotMap.getPIDPVal("Lift", 0.2);
 		m_dLiftPIDI = Robot.m_robotMap.getPIDIVal("Lift", 0.0);
 		m_dLiftPIDD = Robot.m_robotMap.getPIDDVal("Lift", 0.0);
 		m_dLiftPIDTolerance = Robot.m_robotMap.getPIDToleranceVal("Lift", 100);
 		m_dLiftPIDSpeed = 1;
-		m_leftLiftController1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-		m_leftLiftController1.setSensorPhase(true);
+		m_rightLiftController1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+		m_rightLiftController1.setSensorPhase(true);
 		m_liftPID = new PIDController(0.2, 0.0, 0.0, new getLiftEncoder(), new putLiftSpeed()); 
 	}
     
@@ -66,22 +69,22 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void moveLift( double speed ) {
-    	if ( ( m_leftLiftController1.getSelectedSensorPosition(0) >= kdLiftTop 
-    			&& speed > 0 ) ) {
-    		m_liftControlGroup.set(kdSpeedHold);
+    	if ( ( m_rightLiftController1.getSelectedSensorPosition(0) >= kdLiftTop 
+    			&& -speed < 0 ) ) {
+    		m_liftControlGroup.set(-kdSpeedHold);
     		m_dLiftSpeed = 0.0;
     	} else { 
-    		m_liftControlGroup.set(speed + kdSpeedHold);
-    		m_dLiftSpeed = speed;
+    		m_liftControlGroup.set(-speed - kdSpeedHold);
+    		m_dLiftSpeed = -speed;
     	}
-    	if ( m_leftLiftController1.getSensorCollection().isRevLimitSwitchClosed() ) {
+    	if ( m_leftLiftController1.getSensorCollection().isFwdLimitSwitchClosed() ) {
     		setEncoderZero();
     	}
-    	SmartDashboard.putNumber("Lift Encoder", m_leftLiftController1.getSelectedSensorPosition(0));
+    	SmartDashboard.putNumber("Lift Encoder", m_rightLiftController1.getSelectedSensorPosition(0));
     	if (Robot.m_robotMap.isDashboardTest()) {
     		SmartDashboard.putBoolean("LiftUpperLimit", m_leftLiftController1.getSensorCollection().isFwdLimitSwitchClosed());
     		SmartDashboard.putBoolean("LiftBottomLimit", m_leftLiftController1.getSensorCollection().isRevLimitSwitchClosed());
-    		SmartDashboard.putNumber("LiftSpeed", speed);
+    		SmartDashboard.putNumber("LiftSpeed", -speed);
     	}
     }
     
@@ -94,11 +97,11 @@ public class LiftSubsystem extends Subsystem {
     }
     
     public void setEncoderZero() {
-    	m_leftLiftController1.setSelectedSensorPosition(0, 0, 0);
+    	m_rightLiftController1.setSelectedSensorPosition(0, 0, 0);
     }
     
     public void moveLiftToTarget(double target) {
-    	if ( m_leftLiftController1.getSelectedSensorPosition(0) <= target ) {
+    	if ( m_rightLiftController1.getSelectedSensorPosition(0) <= target ) {
 			moveLiftUp();
 		} else {
 			moveLiftDown();
@@ -108,12 +111,12 @@ public class LiftSubsystem extends Subsystem {
     public boolean isLiftAtTarget(double target) {
     	boolean bReturnVal = false;
     	if ( m_dLiftSpeed < 0 ) {
-    		if ( m_leftLiftController1.getSelectedSensorPosition(0) <= target ) {
+    		if ( m_rightLiftController1.getSelectedSensorPosition(0) <= target ) {
     			bReturnVal = true;
     		}
     	} else { 
     		if ( m_dLiftSpeed > 0 ) {
-    			if ( m_leftLiftController1.getSelectedSensorPosition(0) >= target ) {
+    			if ( m_rightLiftController1.getSelectedSensorPosition(0) >= target ) {
     				bReturnVal = true;
     			}
     		} else {
@@ -158,7 +161,7 @@ public class LiftSubsystem extends Subsystem {
 		@Override
 		public double pidGet() {
 			// TODO Auto-generated method stub
-			return m_leftLiftController1.getSelectedSensorPosition(0);
+			return m_rightLiftController1.getSelectedSensorPosition(0);
 		}
     	
     }

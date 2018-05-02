@@ -182,7 +182,9 @@ public class Autonomous extends CommandGroup {
     		break;
     	case "MoveLiftToTarget":
     		addParallel( new MoveLiftToTarget(Double.valueOf(commandValue)));
-    		addSequential(new TiltToVertical(2));
+    		break;
+    	case "MoveLiftToTargetTimed":
+    		addParallel( new TimedLift(Double.valueOf(commandValue)));
     		break;
     	case "TiltToBottom":
     		addSequential( new TiltToBottom(Double.valueOf(commandValue)));
